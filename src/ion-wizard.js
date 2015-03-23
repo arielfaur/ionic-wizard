@@ -7,7 +7,7 @@ angular.module('ionic.wizard', [])
             controller: ['$scope', '$ionicSlideBoxDelegate', function($scope, $ionicSlideBoxDelegate) {
                 var totalSteps, activeIndex = 0;
 
-                $scope.conditions = [];
+
 
                 //$ionicSlideBoxDelegate.enableSlide(false);
                 $scope.getActiveStep = function() {
@@ -35,6 +35,8 @@ angular.module('ionic.wizard', [])
             terminal: true,
             priority: 1000,
             link: function (scope, element, attrs, controller) {
+
+                scope.conditions = [];
                 /*
                  http://stackoverflow.com/questions/19224028/add-directives-from-directive-in-angularjs?rq=1
                  * */
@@ -49,9 +51,9 @@ angular.module('ionic.wizard', [])
         return {
             restrict: 'EA',
             //scope: {},
-            require: '^wizard',
+            //require: '^wizard',
             link: function(scope, element, attrs, controller) {
-                var stepCondition = attrs.wizardStep;
+                var stepCondition = attrs.ionWizardStep;
                 scope.conditions.push(stepCondition);
             }
         }
