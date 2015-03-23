@@ -4,6 +4,7 @@ describe('Unit testing wizard directives', function() {
         scope;
 
     // Load the ionic.wizard module, which contains the directive
+    beforeEach(module('ionic'));
     beforeEach(module('ionic.wizard'));
 
     // Store references to $rootScope and $compile
@@ -104,4 +105,25 @@ describe('Unit testing wizard directives', function() {
         // Check that the compiled element contains the templated content
         expect(element.html()).toContain("lidless, wreathed in flame, 2 times");
     });*/
+
+    describe('Test wizard step directive', function() {
+        var element, wrappedElement, $ionicSlideBoxDelegate, compile;
+
+        beforeEach(inject(function(_$ionicSlideBoxDelegate_){
+            //wrappedElement = angular.element(element);
+            $ionicSlideBoxDelegate = _$ionicSlideBoxDelegate_;
+
+            scope.conditions = [];
+
+        }));
+
+        it('Adds exactly 2 conditions to parent scope array', function() {
+            element = "<div ion-wizard-step=''>Move next</div><div ion-wizard-step='1=1'>Move next</div><div ion-wizard-step='2=2'>Move next</div>";
+            $compile(element)(scope);
+
+            expect(scope.conditions).toContain('1=1');
+            expect(scope.conditions).toContain('2=2');
+            expect(scope.conditions.length).toBe(3);
+        })
+    })
 });
