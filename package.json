@@ -1,6 +1,6 @@
 {
   "name": "ionic-wizard",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A set of Angular/Ionic directives to create a wizard using Ionic's slide box component",
   "repository": "https://github.com/arielfaur/ionic-wizard",
   "license": "MIT",
