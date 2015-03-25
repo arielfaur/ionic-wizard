@@ -57,9 +57,9 @@ Main wizard directive must be added to Ionic's ion-slide-box directive
 
 
 ###ion-wizard-step
-This directive must be added to each ion-slide to define each step of the wizard. A condition can be added that will be
-evaluated before allowing the user to move forward. If the condition is not satisfied the event **wizard:StepFailed** is triggered
-and can be captured to display any information.
+This directive must be added to each ion-slide to define each step of the wizard. If needed, a condition can be added that will be
+evaluated before allowing the user to move forward. If the condition fails the directive will trigger
+an event that can be used to inform the user or perform any other action from the controller.
 
 ```
 <ion-slide ion-wizard-step condition="user.LastName != undefined">...</ion-slide>
