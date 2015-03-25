@@ -2,6 +2,10 @@
 
 These are a set of directives for Ionic aimed at creating a startup wizard component using Ionic's ion-slide-box
 
+##Demo
+
+http://codepen.io/arielfaur/pen/qEgVKx/
+
 ## Getting Started
 
 ```
@@ -54,8 +58,8 @@ Main wizard directive must be added to Ionic's ion-slide-box directive
 
 ###ion-wizard-step
 This directive must be added to each ion-slide to define each step of the wizard. A condition can be added that will be
-evaluated before allowing the user to move forward. If the condition is not satisfied an event is triggered that can be used
-to display any information.
+evaluated before allowing the user to move forward. If the condition is not satisfied the event **wizard:StepFailed** is triggered
+and can be captured to display any information.
 
 ```
 <ion-slide ion-wizard-step condition="user.LastName != undefined">...</ion-slide>
@@ -79,7 +83,73 @@ angular.module('myApp.controllers')
     }]);
 ```
 
+##Sample view with a wizard definition
 
-
-
+```
+    <ion-view>
+        <ion-nav-buttons side="left">
+            <button class="button button-light no-animation" ng-click="start()">
+                Skip wizard
+            </button>
+            <button class="button button-light no-animation" ion-wizard-previous>
+                Back
+            </button>
+        </ion-nav-buttons>
+        <ion-nav-buttons side="right">
+            <button class="button button-light no-animation" ion-wizard-next>
+                Next
+            </button>
+            <button class="button button-light no-animation" ion-wizard-start="start()">
+                Start App
+            </button>
+        </ion-nav-buttons>
+        <ion-slide-box ion-wizard>
+            <ion-slide ion-wizard-step class="has-header">
+                <div class="row">
+                    <div class="col col-center">
+                        <div class="card rounded">
+                            <div class="item">
+                                <h2 class="positive">Thanks for trying out this wizard!</h2>
+                            </div>
+                            <div class="item item-text-wrap">
+                                <p>
+                                    Click the buttons above
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ion-slide>
+            <ion-slide ion-wizard-step condition="step2.name" class="has-header">
+                <div class="row">
+                    <div class="col col-center">
+                        <div class="item item-input-inset">
+                            <label class="item item-input-wrapper">
+                                <i class="icon ion-search placeholder-icon"></i>
+                                <input type="text" placeholder="Type something" ng-model="step2.name" autocomplete="off">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-center">
+                        <div class="card rounded" ng-show="step2.name">
+                            <div class="item">
+                                <h2 class="positive">Now you can move on! Click on the next button.</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ion-slide>
+            <ion-slide ion-wizard-step class="has-header">
+                <div class="row">
+                    <div class="col col-center">
+                        <h3 class="positive">Thanks for completing the wizard!</h3>
+                        <p>You can start using the app</p>
+                    </div>
+                </div>
+            </ion-slide>
+        </ion-slide-box>
+    </ion-view>
+```
 
