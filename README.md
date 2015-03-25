@@ -1,6 +1,6 @@
-# ionic-wizard — wizard directives
+# ionic-wizard
 
-These are a set of directives for Ionic aimed at creating a startup wizard component using Ionic's ion-slide-box
+A set of Angular directives to create a startup wizard component using Ionic's ion-slide-box
 
 ##Demo
 
