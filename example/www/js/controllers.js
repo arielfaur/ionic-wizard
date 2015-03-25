@@ -1,9 +1,21 @@
 angular.module('starter.controllers', [])
 
-.controller('IntroCtrl', ['$scope', '$state', function($scope, $state) {
+.controller('IntroCtrl', ['$scope', '$state', '$ionicPopup', function($scope, $state, $ionicPopup) {
     $scope.start = function() {
         $state.go('tab.dash');
-    }
+    };
+
+    $scope.$on('wizard:StepFailed', function(e, args) {
+        if (args.index == 1) {
+            $ionicPopup.alert({
+                title: 'Empty field',
+                template: 'Please enter a value!'
+            }).then(function (res) {
+                console.log('Field is empty');
+            });
+        }
+    });
+
 }])
 
 .controller('DashCtrl', function($scope) {})

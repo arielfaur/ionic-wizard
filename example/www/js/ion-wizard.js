@@ -1,34 +1,37 @@
 angular.module('ionic.wizard', [])
 
-    .directive('ionWizard', ['$rootScope', function($rootScope) {
+    .directive('ionWizard', ['$rootScope', '$ionicSlideBoxDelegate', function($rootScope, $ionicSlideBoxDelegate) {
         return{
             restrict: 'EA',
-            //scope: {},    // shared scope so we can evaluate expressions from parent scopes
-            controller: ['$scope', '$ionicSlideBoxDelegate', function($scope, $ionicSlideBoxDelegate) {
-
+            controller: [function() {
                 var conditions = [];
 
                 this.addCondition = function(condition) {
                     conditions.push(condition);
                 };
 
-                $scope.$on("wizard:Previous", function() {
-                    $ionicSlideBoxDelegate.previous();
-                    $rootScope.$broadcast("wizard:Index");
-                });
-                $scope.$on("wizard:Next", function() {
-                    var index = $ionicSlideBoxDelegate.currentIndex();
+                this.isStepValid = function(index) {
+                    return angular.isDefined(conditions[index]) ? conditions[index]() : true;
+                };
 
-                    var isStepValid = angular.isDefined(conditions[index]) ? conditions[index]() : true;
-                    if (isStepValid) {
-                        $ionicSlideBoxDelegate.next();
-                        $rootScope.$broadcast("wizard:Index");
-                    }
-                });
             }],
             link: function (scope, element, attrs, controller) {
                 element.css('height', '100%');
 
+                scope.$on("wizard:Previous", function() {
+                    $ionicSlideBoxDelegate.previous();
+                    $rootScope.$broadcast("wizard:IndexChanged");
+                });
+                scope.$on("wizard:Next", function() {
+                    var index = $ionicSlideBoxDelegate.currentIndex();
+
+                    if (controller.isStepValid(index)) {
+                        $ionicSlideBoxDelegate.next();
+                        $rootScope.$broadcast("wizard:IndexChanged");
+                    } else {
+                        $rootScope.$broadcast("wizard:StepFailed", {index: index});
+                    }
+                });
             }
         }
 
@@ -58,7 +61,7 @@ angular.module('ionic.wizard', [])
                     $rootScope.$broadcast("wizard:Previous");
                 });
 
-                scope.$on("wizard:Index", function() {
+                scope.$on("wizard:IndexChanged", function() {
                     element.toggleClass('ng-hide', $ionicSlideBoxDelegate.currentIndex() == 0);
                 });
             }
@@ -73,7 +76,7 @@ angular.module('ionic.wizard', [])
                     $rootScope.$broadcast("wizard:Next");
                 });
 
-                scope.$on("wizard:Index", function() {
+                scope.$on("wizard:IndexChanged", function() {
                     element.toggleClass('ng-hide', $ionicSlideBoxDelegate.currentIndex() == $ionicSlideBoxDelegate.slidesCount() - 1);
                 });
             }
@@ -92,7 +95,7 @@ angular.module('ionic.wizard', [])
                     scope.startFn();
                 });
 
-                scope.$on("wizard:Index", function() {
+                scope.$on("wizard:IndexChanged", function() {
                     element.toggleClass('ng-hide', $ionicSlideBoxDelegate.currentIndex() < $ionicSlideBoxDelegate.slidesCount() - 1);
                 });
             }
