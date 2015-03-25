@@ -57,7 +57,6 @@ angular.module('ionic.wizard', [])
                 element.addClass('ng-hide');
 
                 element.on('click', function() {
-                    //$ionicSlideBoxDelegate.previous();
                     $rootScope.$broadcast("wizard:Previous");
                 });
 
