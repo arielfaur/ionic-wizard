@@ -37,7 +37,7 @@ Add this directive to any link or button to add next behavior. Next button will 
 ```
 
 ###ion-wizard-start
-Use this directive to attach a callback to the start button to launch the app. The button will be hidden and shown only
+Use this directive to attach a callback to the start button to launch the app. The button will be shown only
 in the last step of the wizard.
 
 ```
