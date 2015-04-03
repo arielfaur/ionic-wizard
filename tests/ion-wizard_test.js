@@ -32,7 +32,7 @@ describe('Unit testing wizard directives', function() {
             wrappedElement = angular.element(element);
         }));
 
-        it('Broadcasts next event on click', function() {
+        it('Should broadcast next event on click', function() {
             // Compile a piece of HTML containing the directive
             element = $compile("<button ion-wizard-next>Move next</button>")(scope);
 
@@ -41,28 +41,24 @@ describe('Unit testing wizard directives', function() {
         });
 
 
-        it('Hides next button when reaching the last wizard step', function() {
+        it('Should hide next button when reaching the last wizard step', function() {
 
-            spyOn($ionicSlideBoxDelegate, 'currentIndex').andReturn(2);
             spyOn($ionicSlideBoxDelegate, 'slidesCount').andReturn(3);
 
             // Compile a piece of HTML containing the directive
             $compile(wrappedElement)(scope);
 
-            $rootScope.$broadcast('wizard:IndexChanged');
-            expect($rootScope.$broadcast).toHaveBeenCalledWith("wizard:IndexChanged");
+            $rootScope.$broadcast('slideBox.slideChanged', 2);
 
             expect(wrappedElement.hasClass('ng-hide')).toBeTruthy();
         });
 
-        it('Does not hide next button if not the end of wizard', function() {
-            spyOn($ionicSlideBoxDelegate, 'currentIndex').andReturn(1);
+        it('Should display next button if not the end of wizard', function() {
             spyOn($ionicSlideBoxDelegate, 'slidesCount').andReturn(13);
 
             $compile(wrappedElement)(scope);
 
-            $rootScope.$broadcast('wizard:IndexChanged');
-            expect($rootScope.$broadcast).toHaveBeenCalledWith("wizard:IndexChanged");
+            $rootScope.$broadcast('slideBox.slideChanged', 1);
 
             expect(wrappedElement.hasClass('ng-hide')).toBeFalsy();
         });
@@ -80,7 +76,7 @@ describe('Unit testing wizard directives', function() {
             wrappedElement = angular.element(element);
         }));
 
-        it('Broadcasts next event on click', function() {
+        it('Should broadcast next event on click', function() {
             // Compile a piece of HTML containing the directive
             var el = $compile(element)(scope);
 
@@ -89,24 +85,18 @@ describe('Unit testing wizard directives', function() {
         });
 
 
-        it('Hides previous button on first step', function() {
-            spyOn($ionicSlideBoxDelegate, 'currentIndex').andReturn(0);
-
+        it('Should hide previous button on first step', function() {
             $compile(wrappedElement)(scope);
 
-            $rootScope.$broadcast('wizard:IndexChanged');
-            expect($rootScope.$broadcast).toHaveBeenCalledWith("wizard:IndexChanged");
+            $rootScope.$broadcast('slideBox.slideChanged', 0);
 
             expect(wrappedElement.hasClass('ng-hide')).toBeTruthy();
         });
 
-        it('Does not hide previous button on other steps', function() {
-            spyOn($ionicSlideBoxDelegate, 'currentIndex').andReturn(2);
-
+        it('Should display previous button on every other step', function() {
             $compile(wrappedElement)(scope);
 
-            $rootScope.$broadcast('wizard:IndexChanged');
-            expect($rootScope.$broadcast).toHaveBeenCalledWith("wizard:IndexChanged");
+            $rootScope.$broadcast('slideBox.slideChanged', 5);
 
             expect(wrappedElement.hasClass('ng-hide')).toBeFalsy();
         });
@@ -120,6 +110,13 @@ describe('Unit testing wizard directives', function() {
         beforeEach(inject(function(_$ionicSlideBoxDelegate_) {
             $ionicSlideBoxDelegate = _$ionicSlideBoxDelegate_;
 
+            scope.conditionStep2 = function() {
+                return true;
+            };
+            scope.conditionStep3 = function() {
+                return false;
+            };
+
             element = angular.element("<div ion-wizard><div ion-wizard-step condition=''>Move next</div><div ion-wizard-step condition='conditionStep2()'>Move next</div><div ion-wizard-step condition='conditionStep3()'>Move next</div></div>");
             $compile(element)(scope);
             scope.$digest();
@@ -127,30 +124,22 @@ describe('Unit testing wizard directives', function() {
         }));
 
         it('Should pass when condition undefined on button click', function() {
-            spyOn($ionicSlideBoxDelegate, 'currentIndex').andReturn(0);
-            spyOn(controller, 'isStepValid').andReturn(true);
             $rootScope.$broadcast('wizard:Next');
 
-            expect(controller.isStepValid).toHaveBeenCalledWith(0);
-            expect($rootScope.$broadcast).toHaveBeenCalledWith("wizard:IndexChanged");
+            expect(controller.isStepValid(0)).toBeTruthy(); // first condition is undefined
+
         });
 
         it('Should pass when condition is defined and truthy on button click', function() {
-            spyOn($ionicSlideBoxDelegate, 'currentIndex').andReturn(1);
-            spyOn(controller, 'isStepValid').andReturn(111);
             $rootScope.$broadcast('wizard:Next');
 
-            expect(controller.isStepValid).toHaveBeenCalledWith(1);
-            expect($rootScope.$broadcast).toHaveBeenCalledWith("wizard:IndexChanged");
+            expect(controller.isStepValid(1)).toBeTruthy(); // second condition is defined as truthy
         });
 
         it('Should not pass when condition is defined and falsy on button click', function() {
-            spyOn($ionicSlideBoxDelegate, 'currentIndex').andReturn(2);
-            spyOn(controller, 'isStepValid').andReturn(false);
             $rootScope.$broadcast('wizard:Next');
 
-            expect(controller.isStepValid).toHaveBeenCalledWith(2);
-            expect($rootScope.$broadcast).toHaveBeenCalledWith("wizard:StepFailed", {index: 2});
+            expect(controller.isStepValid(2)).toBeFalsy();  // third condition is defined as falsy
         });
     });
 
@@ -165,26 +154,22 @@ describe('Unit testing wizard directives', function() {
             wrappedElement = angular.element(element);
         }));
 
-        it('Hides button on any step but the last one', function () {
-            spyOn($ionicSlideBoxDelegate, 'currentIndex').andReturn(5);
+        it('Should hide start button on any step but the last one', function () {
             spyOn($ionicSlideBoxDelegate, 'slidesCount').andReturn(13);
 
             $compile(wrappedElement)(scope);
 
-            $rootScope.$broadcast('wizard:IndexChanged');
-            expect($rootScope.$broadcast).toHaveBeenCalledWith("wizard:IndexChanged");
+            $rootScope.$broadcast('slideBox.slideChanged', 5);
 
             expect(wrappedElement.hasClass('ng-hide')).toBeTruthy();
         });
 
-        it('Shows button on the last step', function () {
-            spyOn($ionicSlideBoxDelegate, 'currentIndex').andReturn(12);
+        it('Should display start button on the last step', function () {
             spyOn($ionicSlideBoxDelegate, 'slidesCount').andReturn(13);
 
             $compile(wrappedElement)(scope);
 
-            $rootScope.$broadcast('wizard:IndexChanged');
-            expect($rootScope.$broadcast).toHaveBeenCalledWith("wizard:IndexChanged");
+            $rootScope.$broadcast('slideBox.slideChanged', 12);
 
             expect(wrappedElement.hasClass('ng-hide')).toBeFalsy();
         });

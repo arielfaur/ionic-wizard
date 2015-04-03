@@ -4,10 +4,9 @@ module.exports = function(config){
     basePath : './',
 
     files : [
-      //'bower_components/angular/angular.js',
       'bower_components/ionic/js/ionic.bundle.js',
       'bower_components/angular-mocks/angular-mocks.js',
-      'src*/**/*.js',
+      'dist*/**/*.js',
       'tests*/**/*.js'
     ],
 
@@ -29,5 +28,5 @@ module.exports = function(config){
       suite: 'unit'
     }
 
-  });
+});
 };
