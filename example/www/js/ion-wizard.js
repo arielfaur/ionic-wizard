@@ -16,21 +16,25 @@ angular.module('ionic.wizard', [])
 
             }],
             link: function (scope, element, attrs, controller) {
+                var currentIndex = 0;
+
+                $ionicSlideBoxDelegate.enableSlide(false);
+
                 element.css('height', '100%');
 
                 scope.$on("wizard:Previous", function() {
                     $ionicSlideBoxDelegate.previous();
-                    $rootScope.$broadcast("wizard:IndexChanged");
                 });
                 scope.$on("wizard:Next", function() {
-                    var index = $ionicSlideBoxDelegate.currentIndex();
-
-                    if (controller.isStepValid(index)) {
+                    if (controller.isStepValid(currentIndex)) {
                         $ionicSlideBoxDelegate.next();
-                        $rootScope.$broadcast("wizard:IndexChanged");
                     } else {
-                        $rootScope.$broadcast("wizard:StepFailed", {index: index});
+                        $rootScope.$broadcast("wizard:StepFailed", {index: currentIndex});
                     }
+                });
+
+                scope.$on("slideBox.slideChanged", function(e, index) {
+                    currentIndex = index;
                 });
             }
         }
@@ -61,8 +65,8 @@ angular.module('ionic.wizard', [])
                     $rootScope.$broadcast("wizard:Previous");
                 });
 
-                scope.$on("wizard:IndexChanged", function() {
-                    element.toggleClass('ng-hide', $ionicSlideBoxDelegate.currentIndex() == 0);
+                scope.$on("slideBox.slideChanged", function(e, index) {
+                    element.toggleClass('ng-hide', index == 0);
                 });
             }
         }
@@ -76,8 +80,8 @@ angular.module('ionic.wizard', [])
                     $rootScope.$broadcast("wizard:Next");
                 });
 
-                scope.$on("wizard:IndexChanged", function() {
-                    element.toggleClass('ng-hide', $ionicSlideBoxDelegate.currentIndex() == $ionicSlideBoxDelegate.slidesCount() - 1);
+                scope.$on("slideBox.slideChanged", function(e, index) {
+                    element.toggleClass('ng-hide', index == $ionicSlideBoxDelegate.slidesCount() - 1);
                 });
             }
         }
@@ -95,8 +99,8 @@ angular.module('ionic.wizard', [])
                     scope.startFn();
                 });
 
-                scope.$on("wizard:IndexChanged", function() {
-                    element.toggleClass('ng-hide', $ionicSlideBoxDelegate.currentIndex() < $ionicSlideBoxDelegate.slidesCount() - 1);
+                scope.$on("slideBox.slideChanged", function(e, index) {
+                    element.toggleClass('ng-hide', index < $ionicSlideBoxDelegate.slidesCount() - 1);
                 });
             }
         }

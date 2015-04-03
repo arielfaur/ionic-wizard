@@ -1,7 +1,7 @@
 {
   "name": "ionic-wizard",
-  "version": "1.0.0",
-  "description": "A set of Angular/Ionic directives to create a wizard using Ionic's slide box component",
+  "version": "1.0.1",
+  "description": "A set of Angular/Ionic directives to create a wizard using Ionic slide box component",
   "repository": "https://github.com/arielfaur/ionic-wizard",
   "license": "MIT",
   "devDependencies": {
@@ -19,6 +19,6 @@
 
     "pretest": "npm install",
     "test": "node node_modules/karma/bin/karma start karma.conf.js",
-    "test-single-run": "karma start karma.conf.js  --single-run",
+    "test-single-run": "karma start karma.conf.js  --single-run"
   }
 }
