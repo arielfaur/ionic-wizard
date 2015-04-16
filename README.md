@@ -4,6 +4,18 @@ A set of Angular directives to create a startup wizard component using Ionic's i
 
 [Demo] (http://arielfaur.github.io/ionic-wizard/example/www)
 
+## Sample Projects
+
+There are two sample Ionic projects included. They may be run locally with `ionic serve`
+
+### example
+
+A simple wizard as shown in the demo above, run each time the app is launched.
+
+### example-storage
+ 
+A first time wizard with localStorage integration, runs only once and saves some settings in the localStorage.
+
 ## Getting Started
 
 ```
