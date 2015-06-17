@@ -2,7 +2,7 @@
 
 A set of Angular directives to create a startup wizard component using Ionic's ion-slide-box
 
-[Demo] (http://arielfaur.github.io/ionic-wizard/example/www)
+[Demo] (http://run.plnkr.co/plunks/E6fpAnDtsxPAhhSCrNZ4/)
 
 ## Sample Projects
 
