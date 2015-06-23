@@ -126,20 +126,28 @@ describe('Unit testing wizard directives', function() {
         it('Should pass when condition undefined on button click', function() {
             $rootScope.$broadcast('wizard:Next');
 
-            expect(controller.isStepValid(0)).toBeTruthy(); // first condition is undefined
-
+            var conditionFn = controller.getCondition(0);
+            conditionFn().then(function(result) {
+                expect(result).toBeTruthy(); // first condition is undefined
+            });
         });
 
         it('Should pass when condition is defined and truthy on button click', function() {
             $rootScope.$broadcast('wizard:Next');
 
-            expect(controller.isStepValid(1)).toBeTruthy(); // second condition is defined as truthy
+            var conditionFn = controller.getCondition(1);
+            conditionFn().then(function(result) {
+                expect(result).toBeTruthy(); // second condition is defined as truthy
+            });
         });
 
         it('Should not pass when condition is defined and falsy on button click', function() {
             $rootScope.$broadcast('wizard:Next');
 
-            expect(controller.isStepValid(2)).toBeFalsy();  // third condition is defined as falsy
+            var conditionFn = controller.getCondition(2);
+            conditionFn().then(function(result) {
+                expect(result).toBeFalsy(); // third condition is defined as falsyy
+            });
         });
     });
 

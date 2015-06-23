@@ -1,5 +1,7 @@
 angular.module('ionic.wizard', [])
-
+    .directive('ionWizardContent', ['ionContentDirective', function(ionContentDirective) {
+      return angular.extend({}, ionContentDirective[0], { scope: false });
+    }])
     .directive('ionWizard', ['$rootScope', '$ionicSlideBoxDelegate', function($rootScope, $ionicSlideBoxDelegate) {
         return{
             restrict: 'EA',
@@ -10,8 +12,8 @@ angular.module('ionic.wizard', [])
                     conditions.push(condition);
                 };
 
-                this.isStepValid = function(index) {
-                    return angular.isDefined(conditions[index]) ? conditions[index]() : true;
+                this.getCondition = function(index) {
+                    return conditions[index];
                 };
 
             }],
@@ -26,11 +28,12 @@ angular.module('ionic.wizard', [])
                     $ionicSlideBoxDelegate.previous();
                 });
                 scope.$on("wizard:Next", function() {
-                    if (controller.isStepValid(currentIndex)) {
+                    var fn = controller.getCondition(currentIndex);
+                    fn().then(function () {
                         $ionicSlideBoxDelegate.next();
-                    } else {
+                    }, function () {
                         $rootScope.$broadcast("wizard:StepFailed", {index: currentIndex});
-                    }
+                    })
                 });
 
                 scope.$on("slideBox.slideChanged", function(e, index) {
@@ -40,7 +43,7 @@ angular.module('ionic.wizard', [])
         }
 
     }])
-    .directive('ionWizardStep', [function() {
+    .directive('ionWizardStep', ['$q', function($q) {
         return {
             restrict: 'EA',
             scope: {
@@ -48,11 +51,26 @@ angular.module('ionic.wizard', [])
             },
             require: '^^ionWizard',
             link: function(scope, element, attrs, controller) {
-                controller.addCondition(attrs.condition ? scope.conditionFn : undefined);
+                var fn = function() {
+                    var deferred  = $q.defer();
+
+                    if (angular.isUndefined(attrs.condition)) {
+                        deferred.resolve();
+                    } else {
+                        if (scope.conditionFn()) {
+                            deferred.resolve();
+                        } else {
+                            deferred.reject();
+                        }
+                    }
+
+                    return deferred.promise;
+                };
+                controller.addCondition(fn);
             }
         }
     }])
-    .directive('ionWizardPrevious', ['$rootScope', '$ionicSlideBoxDelegate', function($rootScope, $ionicSlideBoxDelegate) {
+    .directive('ionWizardPrevious', ['$rootScope', '$ionicSlideBoxDelegate', function($rootScope) {
         return{
             restrict: 'EA',
             scope: {},
@@ -61,7 +79,6 @@ angular.module('ionic.wizard', [])
                 element.addClass('ng-hide');
 
                 element.on('click', function() {
-                    //$ionicSlideBoxDelegate.previous();
                     $rootScope.$broadcast("wizard:Previous");
                 });
 

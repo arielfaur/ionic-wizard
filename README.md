@@ -65,14 +65,16 @@ Main wizard directive must be added to Ionic's ion-slide-box directive
 </ion-slide-box>
 ```
 
-
 ###ion-wizard-step
-This directive must be added to each ion-slide to define each step of the wizard. If needed, a condition can be added that will be
-evaluated before allowing the user to move forward. If the condition fails the directive will trigger
-an event that can be used to inform the user or perform any other action from the controller.
+Apply this directive to an `ion-slide` to define each step of the wizard. If needed, a condition can be defined which
+will be evaluated before allowing the user to move forward. An event is generated if the condition fails
+that can be used to inform the user or perform any other action from the controller.
+Apply the `has-header` class to add some top padding in case there is a navigation bar.
 
 ```
-<ion-slide ion-wizard-step condition="user.LastName != undefined">...</ion-slide>
+<ion-slide ion-wizard-step condition="user.LastName != undefined" class="has-header">
+    ...
+</ion-slide>
 ```
 
 Then in your app controller:
@@ -91,6 +93,22 @@ angular.module('myApp.controllers')
             }
         });
     }]);
+```
+
+###ion-wizard-content
+To make the content scrollable within a particular slide wrap the content in a `ion-wizard-content` directive.
+If there is a navigation bar apply the `has-header` class to this directive instead of the outer `ion-slide-box`.
+
+```
+<ion-slide-box ion-wizard>
+        <ion-slide ion-wizard-step>
+            <ion-wizard-content class="has-header">
+                <div class="row">
+                   ...
+                </div>
+            </ion-wizard-content>
+        </ion-slide>
+</ion-slide-box>
 ```
 
 ##Sample view with a wizard definition
