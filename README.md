@@ -1,6 +1,6 @@
 # ionic-wizard
 
-A set of Angular directives to create a startup wizard component using Ionic's ion-slide-box
+A set of Angular directives to create a startup wizard component using Ionic's slide box
 
 [Demo] (http://plnkr.co/edit/V3AiSnB4WYIXmCbNkBvn?p=preview)
 
@@ -97,7 +97,7 @@ angular.module('myApp.controllers')
 
 ###ion-wizard-content
 To make the content scrollable within a particular slide wrap the content in a `ion-wizard-content` directive.
-If there is a navigation bar apply the `has-header` class to this directive instead of the outer `ion-slide-box`.
+If there is a navigation bar apply the `has-header` class to this directive instead of the outer `ion-slide`.
 
 ```
 <ion-slide-box ion-wizard>
