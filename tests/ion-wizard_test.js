@@ -18,7 +18,7 @@ describe('Unit testing wizard directives', function() {
 
         scope = $rootScope.$new();
 
-        spyOn($rootScope, '$broadcast').andCallThrough();
+        spyOn($rootScope, '$broadcast').and.callThrough();
     }));
 
     describe('Test wizard next button', function() {
@@ -43,7 +43,7 @@ describe('Unit testing wizard directives', function() {
 
         it('Should hide next button when reaching the last wizard step', function() {
 
-            spyOn($ionicSlideBoxDelegate, 'slidesCount').andReturn(3);
+            spyOn($ionicSlideBoxDelegate, 'slidesCount').and.returnValue(3);
 
             // Compile a piece of HTML containing the directive
             $compile(wrappedElement)(scope);
@@ -54,7 +54,7 @@ describe('Unit testing wizard directives', function() {
         });
 
         it('Should display next button if not the end of wizard', function() {
-            spyOn($ionicSlideBoxDelegate, 'slidesCount').andReturn(13);
+            spyOn($ionicSlideBoxDelegate, 'slidesCount').and.returnValue(13);
 
             $compile(wrappedElement)(scope);
 
@@ -117,36 +117,74 @@ describe('Unit testing wizard directives', function() {
                 return false;
             };
 
-            element = angular.element("<div ion-wizard><div ion-wizard-step condition=''>Move next</div><div ion-wizard-step condition='conditionStep2()'>Move next</div><div ion-wizard-step condition='conditionStep3()'>Move next</div></div>");
+            scope.prevConditionStep2 = function() {
+                return true;
+            };
+
+            scope.prevConditionStep3 = function() {
+                return false;
+            };
+
+            element = angular.element("<div ion-wizard><div ion-wizard-step condition=''>Move next</div><div ion-wizard-step next-condition='conditionStep2()' prev-condition='prevConditionStep2()'>Move next</div><div ion-wizard-step next-condition='conditionStep3()' prev-condition='prevConditionStep3()'>Move next</div></div>");
             $compile(element)(scope);
             scope.$digest();
             controller = element.controller('ionWizard');
         }));
 
-        it('Should pass when condition undefined on button click', function() {
-            $rootScope.$broadcast('wizard:Next');
+        describe("next-condition", function() {
+            it('Should pass when condition undefined on button click', function() {
+                $rootScope.$broadcast('wizard:Next');
 
-            var conditionFn = controller.getCondition(0);
-            conditionFn().then(function(result) {
-                expect(result).toBeTruthy(); // first condition is undefined
+                var conditionFn = controller.getCondition(0);
+                conditionFn.next().then(function(result) {
+                    expect(result).toBeTruthy(); // first condition is undefined
+                });
+            });
+
+            it('Should pass when condition is defined and truthy on button click', function() {
+                $rootScope.$broadcast('wizard:Next');
+
+                var conditionFn = controller.getCondition(1);
+                conditionFn.next().then(function(result) {
+                    expect(result).toBeTruthy(); // second condition is defined as truthy
+                });
+            });
+
+            it('Should not pass when condition is defined and falsy on button click', function() {
+                $rootScope.$broadcast('wizard:Next');
+
+                var conditionFn = controller.getCondition(2);
+                conditionFn.next().then(function(result) {
+                    expect(result).toBeFalsy(); // third condition is defined as falsyy
+                });
             });
         });
+        describe("prev-condition", function() {
+            it('Should pass when condition undefined on button click', function() {
+                $rootScope.$broadcast('wizard:Previous');
 
-        it('Should pass when condition is defined and truthy on button click', function() {
-            $rootScope.$broadcast('wizard:Next');
-
-            var conditionFn = controller.getCondition(1);
-            conditionFn().then(function(result) {
-                expect(result).toBeTruthy(); // second condition is defined as truthy
+                var conditionFn = controller.getCondition(0);
+                conditionFn.prev().then(function(result) {
+                    expect(result).toBeTruthy(); // first condition is undefined
+                });
             });
-        });
 
-        it('Should not pass when condition is defined and falsy on button click', function() {
-            $rootScope.$broadcast('wizard:Next');
+            it('Should pass when condition is defined and truthy on button click', function() {
+                $rootScope.$broadcast('wizard:Next');
 
-            var conditionFn = controller.getCondition(2);
-            conditionFn().then(function(result) {
-                expect(result).toBeFalsy(); // third condition is defined as falsyy
+                var conditionFn = controller.getCondition(1);
+                conditionFn.prev().then(function(result) {
+                    expect(result).toBeTruthy(); // second condition is defined as truthy
+                });
+            });
+
+            it('Should not pass when condition is defined and falsy on button click', function() {
+                $rootScope.$broadcast('wizard:Next');
+
+                var conditionFn = controller.getCondition(2);
+                conditionFn.prev().then(function(result) {
+                    expect(result).toBeFalsy(); // third condition is defined as falsyy
+                });
             });
         });
     });
@@ -163,7 +201,7 @@ describe('Unit testing wizard directives', function() {
         }));
 
         it('Should hide start button on any step but the last one', function () {
-            spyOn($ionicSlideBoxDelegate, 'slidesCount').andReturn(13);
+            spyOn($ionicSlideBoxDelegate, 'slidesCount').and.returnValue(13);
 
             $compile(wrappedElement)(scope);
 
@@ -173,7 +211,7 @@ describe('Unit testing wizard directives', function() {
         });
 
         it('Should display start button on the last step', function () {
-            spyOn($ionicSlideBoxDelegate, 'slidesCount').andReturn(13);
+            spyOn($ionicSlideBoxDelegate, 'slidesCount').and.returnValue(13);
 
             $compile(wrappedElement)(scope);
 

@@ -16,7 +16,6 @@
     "Ariel Faur <ariel.faur@gmail.com>"
   ],
   "main": "dist/ion-wizard.js",
-
   "keywords": [
     "angular",
     "ionic",
@@ -28,5 +27,8 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "resolutions": {
+    "angular": "1.3.x"
+  }
 }
