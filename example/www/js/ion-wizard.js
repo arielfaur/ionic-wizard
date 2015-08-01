@@ -25,14 +25,20 @@ angular.module('ionic.wizard', [])
                 element.css('height', '100%');
 
                 scope.$on("wizard:Previous", function() {
-                    $ionicSlideBoxDelegate.previous();
+                    var fn = controller.getCondition(currentIndex);
+
+                    fn.prev().then(function () {
+                        $ionicSlideBoxDelegate.previous();
+                    }, function () {
+                        $rootScope.$broadcast("wizard:StepFailed", {index: currentIndex, direction: "previous"});
+                    });
                 });
                 scope.$on("wizard:Next", function() {
                     var fn = controller.getCondition(currentIndex);
-                    fn().then(function () {
+                    fn.next().then(function () {
                         $ionicSlideBoxDelegate.next();
                     }, function () {
-                        $rootScope.$broadcast("wizard:StepFailed", {index: currentIndex});
+                        $rootScope.$broadcast("wizard:StepFailed", {index: currentIndex, direction: "next"});
                     })
                 });
 
@@ -47,17 +53,18 @@ angular.module('ionic.wizard', [])
         return {
             restrict: 'EA',
             scope: {
-                conditionFn: '&condition'
+                nextConditionFn: '&nextCondition',
+                prevConditionFn: "&prevCondition"
             },
             require: '^^ionWizard',
             link: function(scope, element, attrs, controller) {
-                var fn = function() {
+                var nextFn = function() {
                     var deferred  = $q.defer();
 
-                    if (angular.isUndefined(attrs.condition)) {
+                    if (angular.isUndefined(attrs.nextCondition)) {
                         deferred.resolve();
                     } else {
-                        if (scope.conditionFn()) {
+                        if (scope.nextConditionFn()) {
                             deferred.resolve();
                         } else {
                             deferred.reject();
@@ -66,7 +73,29 @@ angular.module('ionic.wizard', [])
 
                     return deferred.promise;
                 };
-                controller.addCondition(fn);
+
+                var prevFn = function() {
+                    var deferred  = $q.defer();
+
+                    if (angular.isUndefined(attrs.prevCondition)) {
+                        deferred.resolve();
+                    } else {
+                        if (scope.prevConditionFn()) {
+                            deferred.resolve();
+                        } else {
+                            deferred.reject();
+                        }
+                    }
+
+                    return deferred.promise;
+                };
+
+                var conditions = {
+                    next: nextFn,
+                    prev: prevFn
+                }
+
+                controller.addCondition(conditions);
             }
         }
     }])
