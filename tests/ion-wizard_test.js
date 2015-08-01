@@ -18,7 +18,7 @@ describe('Unit testing wizard directives', function() {
 
         scope = $rootScope.$new();
 
-        spyOn($rootScope, '$broadcast').andCallThrough();
+        spyOn($rootScope, '$broadcast').and.callThrough();
     }));
 
     describe('Test wizard next button', function() {
@@ -43,7 +43,7 @@ describe('Unit testing wizard directives', function() {
 
         it('Should hide next button when reaching the last wizard step', function() {
 
-            spyOn($ionicSlideBoxDelegate, 'slidesCount').andReturn(3);
+            spyOn($ionicSlideBoxDelegate, 'slidesCount').and.returnValue(3);
 
             // Compile a piece of HTML containing the directive
             $compile(wrappedElement)(scope);
@@ -54,7 +54,7 @@ describe('Unit testing wizard directives', function() {
         });
 
         it('Should display next button if not the end of wizard', function() {
-            spyOn($ionicSlideBoxDelegate, 'slidesCount').andReturn(13);
+            spyOn($ionicSlideBoxDelegate, 'slidesCount').and.returnValue(13);
 
             $compile(wrappedElement)(scope);
 
@@ -163,7 +163,7 @@ describe('Unit testing wizard directives', function() {
         }));
 
         it('Should hide start button on any step but the last one', function () {
-            spyOn($ionicSlideBoxDelegate, 'slidesCount').andReturn(13);
+            spyOn($ionicSlideBoxDelegate, 'slidesCount').and.returnValue(13);
 
             $compile(wrappedElement)(scope);
 
@@ -173,7 +173,7 @@ describe('Unit testing wizard directives', function() {
         });
 
         it('Should display start button on the last step', function () {
-            spyOn($ionicSlideBoxDelegate, 'slidesCount').andReturn(13);
+            spyOn($ionicSlideBoxDelegate, 'slidesCount').and.returnValue(13);
 
             $compile(wrappedElement)(scope);
 
