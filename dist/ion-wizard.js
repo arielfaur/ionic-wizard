@@ -16,6 +16,18 @@ angular.module('ionic.wizard', [])
                     return conditions[index];
                 };
 
+                this.checkNextCondition = function(index) {
+                    return index > (conditions.length - 1)
+                        ? false
+                        : conditions[index].next();
+                };
+
+                this.checkPreviousCondition = function(index) {
+                    return index > (conditions.length - 1)
+                        ? false
+                        : conditions[index].prev();
+                };
+
             }],
             link: function (scope, element, attrs, controller) {
                 var currentIndex = 0;
@@ -25,21 +37,21 @@ angular.module('ionic.wizard', [])
                 element.css('height', '100%');
 
                 scope.$on("wizard:Previous", function() {
-                    var fn = controller.getCondition(currentIndex);
-
-                    fn.prev().then(function () {
+                    if (controller.checkPreviousCondition(currentIndex)) {
                         $ionicSlideBoxDelegate.previous();
-                    }, function () {
+                    }
+                    else {
                         $rootScope.$broadcast("wizard:StepFailed", {index: currentIndex, direction: "previous"});
-                    });
+                    }
                 });
                 scope.$on("wizard:Next", function() {
-                    var fn = controller.getCondition(currentIndex);
-                    fn.next().then(function () {
+
+                    if (controller.checkNextCondition(currentIndex)) {
                         $ionicSlideBoxDelegate.next();
-                    }, function () {
-                        $rootScope.$broadcast("wizard:StepFailed", {index: currentIndex, direction: "next"});
-                    })
+                    }
+                    else {
+                         $rootScope.$broadcast("wizard:StepFailed", {index: currentIndex, direction: "next"});
+                    }
                 });
 
                 scope.$on("slideBox.slideChanged", function(e, index) {
@@ -59,41 +71,21 @@ angular.module('ionic.wizard', [])
             require: '^^ionWizard',
             link: function(scope, element, attrs, controller) {
                 var nextFn = function() {
-                    var deferred  = $q.defer();
-
-                    if (angular.isUndefined(attrs.nextCondition)) {
-                        deferred.resolve();
-                    } else {
-                        if (scope.nextConditionFn()) {
-                            deferred.resolve();
-                        } else {
-                            deferred.reject();
-                        }
-                    }
-
-                    return deferred.promise;
+                    return angular.isUndefined(attrs.nextCondition)
+                        ? true
+                        : scope.nextConditionFn();
                 };
 
                 var prevFn = function() {
-                    var deferred  = $q.defer();
-
-                    if (angular.isUndefined(attrs.prevCondition)) {
-                        deferred.resolve();
-                    } else {
-                        if (scope.prevConditionFn()) {
-                            deferred.resolve();
-                        } else {
-                            deferred.reject();
-                        }
-                    }
-
-                    return deferred.promise;
+                    return angular.isUndefined(attrs.prevCondition)
+                        ? true
+                        : scope.prevConditionFn();
                 };
 
                 var conditions = {
                     next: nextFn,
                     prev: prevFn
-                }
+                };
 
                 controller.addCondition(conditions);
             }
@@ -127,6 +119,7 @@ angular.module('ionic.wizard', [])
                 });
 
                 scope.$on("slideBox.slideChanged", function(e, index) {
+                    element.addClass("ng-disabled");
                     element.toggleClass('ng-hide', index == $ionicSlideBoxDelegate.slidesCount() - 1);
                 });
             }
@@ -140,6 +133,8 @@ angular.module('ionic.wizard', [])
             },
             link: function(scope, element) {
                 element.addClass('ng-hide');
+
+                
 
                 element.on('click', function() {
                     scope.startFn();
