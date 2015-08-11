@@ -43,6 +43,7 @@ angular.module('ionic.wizard', [])
                     $ionicSlideBoxDelegate.next();
                 });
 
+                // watch the current index's condition for changes and broadcast the new condition state on change
                 scope.$watch(function() {
                     return controller.checkNextCondition(currentIndex) && controller.checkPreviousCondition(currentIndex);
                 }, function() {
@@ -67,6 +68,7 @@ angular.module('ionic.wizard', [])
             require: '^^ionWizard',
             link: function(scope, element, attrs, controller) {
                 var nextFn = function() {
+                    // if there's no condition, just set the condition to true, otherwise evaluate
                     return angular.isUndefined(attrs.nextCondition)
                         ? true
                         : scope.nextConditionFn();
@@ -119,7 +121,6 @@ angular.module('ionic.wizard', [])
                 });
 
                 scope.$on("slideBox.slideChanged", function(e, index) {
-                    element.addClass("ng-disabled");
                     element.toggleClass('ng-hide', index == $ionicSlideBoxDelegate.slidesCount() - 1);
                 });
 
