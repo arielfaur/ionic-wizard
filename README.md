@@ -67,32 +67,13 @@ Main wizard directive must be added to Ionic's ion-slide-box directive
 
 ###ion-wizard-step
 Apply this directive to an `ion-slide` to define each step of the wizard. If needed, a `next-condition` can be defined which
-will be evaluated before allowing the user to move forward. An event is generated if the condition fails
-that can be used to inform the user or perform any other action from the controller.
+will be evaluated before allowing the user to move forward. The next button will be disabled until the condition is fulfilled.
 Apply the `has-header` class to add some top padding in case there is a navigation bar.
 
 ```
 <ion-slide ion-wizard-step next-condition="user.LastName != undefined" class="has-header">
     ...
 </ion-slide>
-```
-
-Then in your app controller:
-
-```
-angular.module('myApp.controllers')
-    .controller('IntroCtrl', ['$scope', '$ionicPopup', function($scope, $ionicPopup) {
-        $scope.$on('wizard:StepFailed', function(e, args) {
-            if (args.index == 1 && args.direction == "next") {
-                $ionicPopup.alert({
-                    title: 'Empty field',
-                    template: 'Please enter a value!'
-                }).then(function (res) {
-                    console.log('Field is empty');
-                });
-            }
-        });
-    }]);
 ```
 
 A `prev-condition` attribute can be defined for conditionally allowing a user to move backward in the wizard.
