@@ -4,28 +4,6 @@ angular.module('starter.controllers', [])
     $scope.start = function() {
         $state.go('tab.dash');
     };
-
-    $scope.$on('wizard:StepFailed', function(e, args) {
-        if (args.index == 1) {
-          if (args.direction === "next") {
-            $ionicPopup.alert({
-                title: 'Empty field',
-                template: 'Please enter a value!'
-            }).then(function (res) {
-                console.log('Field is empty');
-            });            
-          }
-
-          if (args.direction === "previous") {
-            $ionicPopup.alert({
-              title: "Field Filled",
-              template: "You've filled the field"
-            });
-          }
-
-        }
-    });
-
 }])
 
 .controller('DashCtrl', function($scope) {})
