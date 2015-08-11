@@ -54,6 +54,13 @@ angular.module('ionic.wizard', [])
                     }
                 });
 
+                scope.$watch(function() {
+                    return controller.checkNextCondition(currentIndex) && controller.checkPreviousCondition(currentIndex);
+                }, function() {
+                    $rootScope.$broadcast("wizard:NextCondition", controller.checkNextCondition(currentIndex));
+                    $rootScope.$broadcast("wizard:PreviousCondition", controller.checkPreviousCondition(currentIndex));                    
+                });
+
                 scope.$on("slideBox.slideChanged", function(e, index) {
                     currentIndex = index;
                 });
@@ -106,6 +113,10 @@ angular.module('ionic.wizard', [])
                 scope.$on("slideBox.slideChanged", function(e, index) {
                     element.toggleClass('ng-hide', index == 0);
                 });
+                
+                scope.$on("wizard:PreviousCondition", function(e, condition) {
+                    element.attr("disabled", !condition);
+                });
             }
         }
     }])
@@ -121,6 +132,10 @@ angular.module('ionic.wizard', [])
                 scope.$on("slideBox.slideChanged", function(e, index) {
                     element.addClass("ng-disabled");
                     element.toggleClass('ng-hide', index == $ionicSlideBoxDelegate.slidesCount() - 1);
+                });
+
+                scope.$on("wizard:NextCondition", function(e, condition) {
+                    element.attr("disabled", !condition); 
                 });
             }
         }
