@@ -105,80 +105,143 @@ describe('Unit testing wizard directives', function() {
 
 
     describe('Test wizard directive', function() {
-        var element, controller, $ionicSlideBoxDelegate;
+        var element, controller, $ionicSlideBoxDelegate, nextButtonElement, prevButtonElement;
 
-        beforeEach(inject(function(_$ionicSlideBoxDelegate_) {
-            $ionicSlideBoxDelegate = _$ionicSlideBoxDelegate_;
+        var injectDirectives = function injectDirectives(condition) {
+            inject(function(_$ionicSlideBoxDelegate_) {
 
-            scope.conditionStep2 = function() {
-                return true;
-            };
-            scope.conditionStep3 = function() {
-                return false;
-            };
+                if (condition === undefined) {
+                    // no conditions
+                    element = angular.element("<div ion-wizard><div ion-wizard-step >Move next</div> \
+                        <div ion-wizard-step >Move next</div> \
+                        </div>"
+                    );
 
-            scope.prevConditionStep2 = function() {
-                return true;
-            };
+                }
+                else {
+                    scope.nextConditionFn = function() {
+                        return condition;
+                    };
 
-            scope.prevConditionStep3 = function() {
-                return false;
-            };
+                    scope.prevConditionFn = function() {
+                        return condition;
+                    };
 
-            element = angular.element("<div ion-wizard><div ion-wizard-step condition=''>Move next</div><div ion-wizard-step next-condition='conditionStep2()' prev-condition='prevConditionStep2()'>Move next</div><div ion-wizard-step next-condition='conditionStep3()' prev-condition='prevConditionStep3()'>Move next</div></div>");
-            $compile(element)(scope);
-            scope.$digest();
-            controller = element.controller('ionWizard');
-        }));
+                    element = angular.element("<div ion-wizard><div ion-wizard-step next-condition='nextConditionFn()' prev-condition='prevConditionFn()'>Move next</div> \
+                        <div ion-wizard-step >Move next</div> \
+                        </div>"
+                    );
+                }
+                prevButtonElement = angular.element("<button ion-wizard-previous>Previous</button>");
+                nextButtonElement = angular.element("<button ion-wizard-next>Next</button>");    
+          
+                $compile(element)(scope);
+                $compile(prevButtonElement)(scope);
+                $compile(nextButtonElement)(scope);
+                scope.$digest();
+                controller = element.controller('ionWizard');
+
+            });
+        }
 
         describe("next-condition", function() {
-            it('Should pass when condition undefined on button click', function() {
-                $rootScope.$broadcast('wizard:Next');
+            describe("for an undefined condition", function() {
+                beforeEach(function() {
+                    injectDirectives(undefined);
+                });
 
-                var conditionFn = controller.getCondition(0);
-                var result = conditionFn.next();
-                expect(result).toBeTruthy(); // first condition is undefined
+                it("should pass", function() {
+                    var condition = controller.checkNextCondition(0);
+                    expect(condition).toBeTruthy();
+                });
+
+                it("should enable the next button", function() {
+                    var buttonDisabled = nextButtonElement.attr("disabled");
+                    expect(buttonDisabled).toBeFalsy();
+                });
             });
 
-            it('Should pass when condition is defined and truthy on button click', function() {
-                $rootScope.$broadcast('wizard:Next');
+            describe("for a true condition", function() {
+                beforeEach(function() {
+                    injectDirectives(true);
+                });
 
-                var conditionFn = controller.getCondition(1);
-                var result = conditionFn.next();
-                expect(result).toBeTruthy(); // second condition is defined as truthy
+                it("should pass", function() {
+                    var condition = controller.checkNextCondition(0);
+                    expect(condition).toBeTruthy();
+                });
+
+                it("should enable the next button", function() {
+                    var buttonDisabled = nextButtonElement.attr("disabled");
+                    expect(buttonDisabled).toBeFalsy();
+                });
             });
 
-            it('Should not pass when condition is defined and falsy on button click', function() {
-                $rootScope.$broadcast('wizard:Next');
-                var conditionFn = controller.getCondition(2);
-                var result = conditionFn.next();
-                expect(result).toBeFalsy(); // third condition is defined as falsyy
+            describe("for a false condition", function() {
+                beforeEach(function() {
+                    injectDirectives(false);
+                });
+
+                it("should fail", function() {
+                    var condition = controller.checkNextCondition(0);
+                    expect(condition).toBeFalsy();
+                });
+
+                it("should disable the next button", function() {
+                    var buttonDisabled = nextButtonElement.attr("disabled");
+                    expect(buttonDisabled).toBeTruthy();
+                });
             });
         });
         describe("prev-condition", function() {
-            it('Should pass when condition undefined on button click', function() {
-                $rootScope.$broadcast('wizard:Previous');
+            describe("for an undefined condition", function() {
+                beforeEach(function() {
+                    injectDirectives(undefined);
+                });
 
-                var conditionFn = controller.getCondition(0);
-                var result = conditionFn.prev();
-                expect(result).toBeTruthy(); // first condition is undefined
+                it("should pass", function() {
+                    var condition = controller.checkPreviousCondition(0);
+                    expect(condition).toBeTruthy();
+                });
+
+                it("should enable the next button", function() {
+                    var buttonDisabled = prevButtonElement.attr("disabled");
+                    expect(buttonDisabled).toBeFalsy();
+                });
             });
 
-            it('Should pass when condition is defined and truthy on button click', function() {
-                $rootScope.$broadcast('wizard:Previous');
+            describe("for a true condition", function() {
+                beforeEach(function() {
+                    injectDirectives(true);
+                });
 
-                var conditionFn = controller.getCondition(1);
-                var result = conditionFn.prev();
-                expect(result).toBeTruthy(); // second condition is defined as truthy
+                it("should pass", function() {
+                    var condition = controller.checkPreviousCondition(0);
+                    expect(condition).toBeTruthy();
+                });
+
+                it("should enable the next button", function() {
+                    var buttonDisabled = prevButtonElement.attr("disabled");
+                    expect(buttonDisabled).toBeFalsy();
+                });
             });
 
-            it('Should not pass when condition is defined and falsy on button click', function() {
-                $rootScope.$broadcast('wizard:Previous');
+            describe("for a false condition", function() {
+                beforeEach(function() {
+                    injectDirectives(false);
+                });
 
-                var conditionFn = controller.getCondition(2);
-                var result  = conditionFn.prev();
-                expect(result).toBeFalsy(); // third condition is defined as falsey
+                it("should fail", function() {
+                    var condition = controller.checkPreviousCondition(0);
+                    expect(condition).toBeFalsy();                    
+                });
+
+                it("should disable the next button", function() {
+                    var buttonDisabled = prevButtonElement.attr("disabled");
+                    expect(buttonDisabled).toBeTruthy();
+                });
             });
+
         });
     });
 
