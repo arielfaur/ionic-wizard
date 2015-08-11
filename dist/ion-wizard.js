@@ -37,21 +37,10 @@ angular.module('ionic.wizard', [])
                 element.css('height', '100%');
 
                 scope.$on("wizard:Previous", function() {
-                    if (controller.checkPreviousCondition(currentIndex)) {
-                        $ionicSlideBoxDelegate.previous();
-                    }
-                    else {
-                        $rootScope.$broadcast("wizard:StepFailed", {index: currentIndex, direction: "previous"});
-                    }
+                    $ionicSlideBoxDelegate.previous();
                 });
                 scope.$on("wizard:Next", function() {
-
-                    if (controller.checkNextCondition(currentIndex)) {
-                        $ionicSlideBoxDelegate.next();
-                    }
-                    else {
-                         $rootScope.$broadcast("wizard:StepFailed", {index: currentIndex, direction: "next"});
-                    }
+                    $ionicSlideBoxDelegate.next();
                 });
 
                 scope.$watch(function() {
