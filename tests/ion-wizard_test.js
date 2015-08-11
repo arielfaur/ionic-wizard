@@ -136,27 +136,23 @@ describe('Unit testing wizard directives', function() {
                 $rootScope.$broadcast('wizard:Next');
 
                 var conditionFn = controller.getCondition(0);
-                conditionFn.next().then(function(result) {
-                    expect(result).toBeTruthy(); // first condition is undefined
-                });
+                var result = conditionFn.next();
+                expect(result).toBeTruthy(); // first condition is undefined
             });
 
             it('Should pass when condition is defined and truthy on button click', function() {
                 $rootScope.$broadcast('wizard:Next');
 
                 var conditionFn = controller.getCondition(1);
-                conditionFn.next().then(function(result) {
-                    expect(result).toBeTruthy(); // second condition is defined as truthy
-                });
+                var result = conditionFn.next();
+                expect(result).toBeTruthy(); // second condition is defined as truthy
             });
 
             it('Should not pass when condition is defined and falsy on button click', function() {
                 $rootScope.$broadcast('wizard:Next');
-
                 var conditionFn = controller.getCondition(2);
-                conditionFn.next().then(function(result) {
-                    expect(result).toBeFalsy(); // third condition is defined as falsyy
-                });
+                var result = conditionFn.next();
+                expect(result).toBeFalsy(); // third condition is defined as falsyy
             });
         });
         describe("prev-condition", function() {
@@ -164,27 +160,24 @@ describe('Unit testing wizard directives', function() {
                 $rootScope.$broadcast('wizard:Previous');
 
                 var conditionFn = controller.getCondition(0);
-                conditionFn.prev().then(function(result) {
-                    expect(result).toBeTruthy(); // first condition is undefined
-                });
+                var result = conditionFn.prev();
+                expect(result).toBeTruthy(); // first condition is undefined
             });
 
             it('Should pass when condition is defined and truthy on button click', function() {
-                $rootScope.$broadcast('wizard:Next');
+                $rootScope.$broadcast('wizard:Previous');
 
                 var conditionFn = controller.getCondition(1);
-                conditionFn.prev().then(function(result) {
-                    expect(result).toBeTruthy(); // second condition is defined as truthy
-                });
+                var result = conditionFn.prev();
+                expect(result).toBeTruthy(); // second condition is defined as truthy
             });
 
             it('Should not pass when condition is defined and falsy on button click', function() {
-                $rootScope.$broadcast('wizard:Next');
+                $rootScope.$broadcast('wizard:Previous');
 
                 var conditionFn = controller.getCondition(2);
-                conditionFn.prev().then(function(result) {
-                    expect(result).toBeFalsy(); // third condition is defined as falsyy
-                });
+                var result  = conditionFn.prev();
+                expect(result).toBeFalsy(); // third condition is defined as falsey
             });
         });
     });
