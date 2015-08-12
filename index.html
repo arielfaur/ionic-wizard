@@ -1,0 +1,237 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Ionic-wizard by arielfaur</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Ionic-wizard</h1>
+        <p>A set of angular directives to create a wizard using Ionic&#39;s slide box</p>
+
+        <p class="view"><a href="https://github.com/arielfaur/ionic-wizard">View the Project on GitHub <small>arielfaur/ionic-wizard</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/arielfaur/ionic-wizard/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/arielfaur/ionic-wizard/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/arielfaur/ionic-wizard">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="ionic-wizard" class="anchor" href="#ionic-wizard" aria-hidden="true"><span class="octicon octicon-link"></span></a>ionic-wizard</h1>
+
+<p>A set of Angular directives to create a startup wizard component using Ionic's slide box</p>
+
+<p><a href="http://plnkr.co/edit/V3AiSnB4WYIXmCbNkBvn?p=preview">Demo</a></p>
+
+<h2>
+<a id="sample-projects" class="anchor" href="#sample-projects" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sample Projects</h2>
+
+<p>There are two sample Ionic projects included. They may be run locally with <code>ionic serve</code></p>
+
+<h3>
+<a id="example" class="anchor" href="#example" aria-hidden="true"><span class="octicon octicon-link"></span></a>example</h3>
+
+<p>A simple wizard as shown in the demo above, run each time the app is launched.</p>
+
+<h3>
+<a id="example-storage" class="anchor" href="#example-storage" aria-hidden="true"><span class="octicon octicon-link"></span></a>example-storage</h3>
+
+<p>A first time wizard with localStorage integration, runs only once and saves some settings in the localStorage.</p>
+
+<h2>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<pre><code>bower install ionic-wizard
+</code></pre>
+
+<h2>
+<a id="add-js-file" class="anchor" href="#add-js-file" aria-hidden="true"><span class="octicon octicon-link"></span></a>Add JS file</h2>
+
+<pre><code>&lt;script src="dist/ion-wizard.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<h2>
+<a id="add-dependencies" class="anchor" href="#add-dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Add dependencies</h2>
+
+<pre><code>angular.module('myApp', ['ionic', 'ionic.wizard'])
+</code></pre>
+
+<h2>
+<a id="create-your-wizard-template-and-add-wizard-directives" class="anchor" href="#create-your-wizard-template-and-add-wizard-directives" aria-hidden="true"><span class="octicon octicon-link"></span></a>Create your wizard template and add wizard directives</h2>
+
+<h3>
+<a id="ion-wizard-previous" class="anchor" href="#ion-wizard-previous" aria-hidden="true"><span class="octicon octicon-link"></span></a>ion-wizard-previous</h3>
+
+<p>Add this directive to any link or button to add back behavior. Back button will be hidden on the first step of the wizard.</p>
+
+<pre><code>&lt;button class="button button-light no-animation" ion-wizard-previous&gt;Back&lt;/button&gt;
+</code></pre>
+
+<h3>
+<a id="ion-wizard-next" class="anchor" href="#ion-wizard-next" aria-hidden="true"><span class="octicon octicon-link"></span></a>ion-wizard-next</h3>
+
+<p>Add this directive to any link or button to add next behavior. Next button will be hidden on the last step of the wizard.</p>
+
+<pre><code>&lt;button class="button button-light no-animation" ion-wizard-next&gt;Next&lt;/button&gt;
+</code></pre>
+
+<h3>
+<a id="ion-wizard-start" class="anchor" href="#ion-wizard-start" aria-hidden="true"><span class="octicon octicon-link"></span></a>ion-wizard-start</h3>
+
+<p>Use this directive to attach a callback to the start button to launch the app. The button will be shown only
+in the last step of the wizard.</p>
+
+<pre><code>&lt;button class="button button-light no-animation" ion-wizard-start="start()"&gt;Start App&lt;/button&gt;
+</code></pre>
+
+<h3>
+<a id="ion-wizard" class="anchor" href="#ion-wizard" aria-hidden="true"><span class="octicon octicon-link"></span></a>ion-wizard</h3>
+
+<p>Main wizard directive must be added to Ionic's ion-slide-box directive</p>
+
+<pre><code>&lt;ion-slide-box ion-wizard&gt;
+    ...
+&lt;/ion-slide-box&gt;
+</code></pre>
+
+<h3>
+<a id="ion-wizard-step" class="anchor" href="#ion-wizard-step" aria-hidden="true"><span class="octicon octicon-link"></span></a>ion-wizard-step</h3>
+
+<p>Apply this directive to an <code>ion-slide</code> to define each step of the wizard. If needed, a <code>next-condition</code> can be defined which
+will be evaluated before allowing the user to move forward. An event is generated if the condition fails
+that can be used to inform the user or perform any other action from the controller.
+Apply the <code>has-header</code> class to add some top padding in case there is a navigation bar.</p>
+
+<pre><code>&lt;ion-slide ion-wizard-step next-condition="user.LastName != undefined" class="has-header"&gt;
+    ...
+&lt;/ion-slide&gt;
+</code></pre>
+
+<p>Then in your app controller:</p>
+
+<pre><code>angular.module('myApp.controllers')
+    .controller('IntroCtrl', ['$scope', '$ionicPopup', function($scope, $ionicPopup) {
+        $scope.$on('wizard:StepFailed', function(e, args) {
+            if (args.index == 1 &amp;&amp; args.direction == "next") {
+                $ionicPopup.alert({
+                    title: 'Empty field',
+                    template: 'Please enter a value!'
+                }).then(function (res) {
+                    console.log('Field is empty');
+                });
+            }
+        });
+    }]);
+</code></pre>
+
+<p>A <code>prev-condition</code> attribute can be defined for conditionally allowing a user to move backward in the wizard.
+It operates the same way as the <code>next-condition</code></p>
+
+<h3>
+<a id="ion-wizard-content" class="anchor" href="#ion-wizard-content" aria-hidden="true"><span class="octicon octicon-link"></span></a>ion-wizard-content</h3>
+
+<p>To make the content scrollable within a particular slide wrap the content in a <code>ion-wizard-content</code> directive.
+If there is a navigation bar apply the <code>has-header</code> class to this directive instead of the outer <code>ion-slide</code>.</p>
+
+<pre><code>&lt;ion-slide-box ion-wizard&gt;
+        &lt;ion-slide ion-wizard-step&gt;
+            &lt;ion-wizard-content class="has-header"&gt;
+                &lt;div class="row"&gt;
+                   ...
+                &lt;/div&gt;
+            &lt;/ion-wizard-content&gt;
+        &lt;/ion-slide&gt;
+&lt;/ion-slide-box&gt;
+</code></pre>
+
+<h2>
+<a id="sample-view-with-a-wizard-definition" class="anchor" href="#sample-view-with-a-wizard-definition" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sample view with a wizard definition</h2>
+
+<pre><code>    &lt;ion-view&gt;
+        &lt;ion-nav-buttons side="left"&gt;
+            &lt;button class="button button-light no-animation" ng-click="start()"&gt;
+                Skip wizard
+            &lt;/button&gt;
+            &lt;button class="button button-light no-animation" ion-wizard-previous&gt;
+                Back
+            &lt;/button&gt;
+        &lt;/ion-nav-buttons&gt;
+        &lt;ion-nav-buttons side="right"&gt;
+            &lt;button class="button button-light no-animation" ion-wizard-next&gt;
+                Next
+            &lt;/button&gt;
+            &lt;button class="button button-light no-animation" ion-wizard-start="start()"&gt;
+                Start App
+            &lt;/button&gt;
+        &lt;/ion-nav-buttons&gt;
+        &lt;ion-slide-box ion-wizard&gt;
+            &lt;ion-slide ion-wizard-step class="has-header"&gt;
+                &lt;div class="row"&gt;
+                    &lt;div class="col col-center"&gt;
+                        &lt;div class="card rounded"&gt;
+                            &lt;div class="item"&gt;
+                                &lt;h2 class="positive"&gt;Thanks for trying out this wizard!&lt;/h2&gt;
+                            &lt;/div&gt;
+                            &lt;div class="item item-text-wrap"&gt;
+                                &lt;p&gt;
+                                    Click the buttons above
+                                &lt;/p&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/ion-slide&gt;
+            &lt;ion-slide ion-wizard-step condition="step2.name" class="has-header"&gt;
+                &lt;div class="row"&gt;
+                    &lt;div class="col col-center"&gt;
+                        &lt;div class="item item-input-inset"&gt;
+                            &lt;label class="item item-input-wrapper"&gt;
+                                &lt;i class="icon ion-search placeholder-icon"&gt;&lt;/i&gt;
+                                &lt;input type="text" placeholder="Type something" ng-model="step2.name" autocomplete="off"&gt;
+                            &lt;/label&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+                &lt;div class="row"&gt;
+                    &lt;div class="col col-center"&gt;
+                        &lt;div class="card rounded" ng-show="step2.name"&gt;
+                            &lt;div class="item"&gt;
+                                &lt;h2 class="positive"&gt;Now you can move on! Click on the next button.&lt;/h2&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/ion-slide&gt;
+            &lt;ion-slide ion-wizard-step class="has-header"&gt;
+                &lt;div class="row"&gt;
+                    &lt;div class="col col-center"&gt;
+                        &lt;h3 class="positive"&gt;Thanks for completing the wizard!&lt;/h3&gt;
+                        &lt;p&gt;You can start using the app&lt;/p&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/ion-slide&gt;
+        &lt;/ion-slide-box&gt;
+    &lt;/ion-view&gt;
+</code></pre>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/arielfaur">arielfaur</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
