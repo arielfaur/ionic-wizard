@@ -16,6 +16,18 @@ angular.module('ionic.wizard', [])
                     return conditions[index];
                 };
 
+                this.checkNextCondition = function(index) {
+                    return index > (conditions.length - 1)
+                        ? false
+                        : conditions[index].next();
+                };
+
+                this.checkPreviousCondition = function(index) {
+                    return index > (conditions.length - 1)
+                        ? false
+                        : conditions[index].prev();
+                };
+
             }],
             link: function (scope, element, attrs, controller) {
                 var currentIndex = 0;
@@ -25,21 +37,18 @@ angular.module('ionic.wizard', [])
                 element.css('height', '100%');
 
                 scope.$on("wizard:Previous", function() {
-                    var fn = controller.getCondition(currentIndex);
-
-                    fn.prev().then(function () {
-                        $ionicSlideBoxDelegate.previous();
-                    }, function () {
-                        $rootScope.$broadcast("wizard:StepFailed", {index: currentIndex, direction: "previous"});
-                    });
+                    $ionicSlideBoxDelegate.previous();
                 });
                 scope.$on("wizard:Next", function() {
-                    var fn = controller.getCondition(currentIndex);
-                    fn.next().then(function () {
-                        $ionicSlideBoxDelegate.next();
-                    }, function () {
-                        $rootScope.$broadcast("wizard:StepFailed", {index: currentIndex, direction: "next"});
-                    })
+                    $ionicSlideBoxDelegate.next();
+                });
+
+                // watch the current index's condition for changes and broadcast the new condition state on change
+                scope.$watch(function() {
+                    return controller.checkNextCondition(currentIndex) && controller.checkPreviousCondition(currentIndex);
+                }, function() {
+                    $rootScope.$broadcast("wizard:NextCondition", controller.checkNextCondition(currentIndex));
+                    $rootScope.$broadcast("wizard:PreviousCondition", controller.checkPreviousCondition(currentIndex));                    
                 });
 
                 scope.$on("slideBox.slideChanged", function(e, index) {
@@ -59,41 +68,22 @@ angular.module('ionic.wizard', [])
             require: '^^ionWizard',
             link: function(scope, element, attrs, controller) {
                 var nextFn = function() {
-                    var deferred  = $q.defer();
-
-                    if (angular.isUndefined(attrs.nextCondition)) {
-                        deferred.resolve();
-                    } else {
-                        if (scope.nextConditionFn()) {
-                            deferred.resolve();
-                        } else {
-                            deferred.reject();
-                        }
-                    }
-
-                    return deferred.promise;
+                    // if there's no condition, just set the condition to true, otherwise evaluate
+                    return angular.isUndefined(attrs.nextCondition)
+                        ? true
+                        : scope.nextConditionFn();
                 };
 
                 var prevFn = function() {
-                    var deferred  = $q.defer();
-
-                    if (angular.isUndefined(attrs.prevCondition)) {
-                        deferred.resolve();
-                    } else {
-                        if (scope.prevConditionFn()) {
-                            deferred.resolve();
-                        } else {
-                            deferred.reject();
-                        }
-                    }
-
-                    return deferred.promise;
+                    return angular.isUndefined(attrs.prevCondition)
+                        ? true
+                        : scope.prevConditionFn();
                 };
 
                 var conditions = {
                     next: nextFn,
                     prev: prevFn
-                }
+                };
 
                 controller.addCondition(conditions);
             }
@@ -114,6 +104,10 @@ angular.module('ionic.wizard', [])
                 scope.$on("slideBox.slideChanged", function(e, index) {
                     element.toggleClass('ng-hide', index == 0);
                 });
+                
+                scope.$on("wizard:PreviousCondition", function(e, condition) {
+                    element.attr("disabled", !condition);
+                });
             }
         }
     }])
@@ -129,6 +123,10 @@ angular.module('ionic.wizard', [])
                 scope.$on("slideBox.slideChanged", function(e, index) {
                     element.toggleClass('ng-hide', index == $ionicSlideBoxDelegate.slidesCount() - 1);
                 });
+
+                scope.$on("wizard:NextCondition", function(e, condition) {
+                    element.attr("disabled", !condition); 
+                });
             }
         }
     }])
@@ -141,6 +139,8 @@ angular.module('ionic.wizard', [])
             },
             link: function(scope, element) {
                 element.addClass('ng-hide');
+
+                
 
                 element.on('click', function() {
                     if (scope.startCondition()) {

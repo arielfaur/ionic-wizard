@@ -91,10 +91,14 @@
             </div>
             <div class="row">
                 <div class="col col-center">
+                    <div class="card rounded" ng-hide="step2.name">
+                        <div class="item">
+                            <h2 class="positive">The next button has been disabled until the input is filled</h2>
+                        </div>
+                    </div>
                     <div class="card rounded" ng-show="step2.name">
                         <div class="item">
-                            <h2 class="positive">Now you can move on! Click on the next button.</h2>
-                            <p>Previous button has now been disabled</p>
+                            <h2 class="positive">Now you can move on! Click on the next button. The previous button has now been disabled</h2>
                         </div>
                     </div>
                 </div>
