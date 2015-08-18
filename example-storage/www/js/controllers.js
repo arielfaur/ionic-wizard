@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('IntroCtrl', ['$scope', '$state', '$ionicPopup', '$localStorage', function($scope, $state, $ionicPopup, $localStorage) {
+.controller('IntroCtrl', ['$scope', '$state', '$localStorage', function($scope, $state, $localStorage) {
     // here we store wizard data
     $scope.wizard = {};
 
@@ -21,17 +21,6 @@ angular.module('starter.controllers', [])
 
         $state.go('tab.dash');
     };
-
-    $scope.$on('wizard:StepFailed', function(e, args) {
-        if (args.index == 1) {
-            $ionicPopup.alert({
-                title: 'Empty field',
-                template: 'Please enter a value!'
-            }).then(function (res) {
-                console.log('Field is empty');
-            });
-        }
-    });
 
 }])
 
