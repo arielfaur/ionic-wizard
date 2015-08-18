@@ -140,14 +140,18 @@ angular.module('ionic.wizard', [])
             link: function(scope, element, attrs) {
                 element.addClass('ng-hide');
 
-                
+                function checkCondition() {
+                    return (angular.isUndefined(attrs.condition)) ? true : scope.startCondition();
+                }
 
                 element.on('click', function() {
-                    if (angular.isUndefined(attrs.condition)) {
-                        scope.startFn();
-                    } else {
-                        scope.startCondition() && scope.startFn();
-                    }
+                    scope.startFn();
+                });
+
+                scope.$watch(function() {
+                    return checkCondition()
+                }, function(result) {
+                    element.attr('disabled', !result);
                 });
 
                 scope.$on("slideBox.slideChanged", function(e, index) {

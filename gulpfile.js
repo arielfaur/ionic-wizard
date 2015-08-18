@@ -7,6 +7,8 @@ var karmaServer = require("karma").server;
 gulp.task("build", function() {
 	gulp.src("src/**/*.js")
 		.pipe(gulp.dest("dist")) // copy unminified to dist too
+        .pipe(gulp.dest("example/www/js"))    // copy unminified to example folders
+        .pipe(gulp.dest("example-storage/www/js"))
 		.pipe(uglify())
 		.pipe(rename(function(path) {
 			path.extname = ".min.js"

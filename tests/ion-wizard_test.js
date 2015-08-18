@@ -301,36 +301,27 @@ describe('Unit testing wizard directives', function() {
                 element = "<button ion-wizard-start='startFn()' condition='onStart_Fail_Condition()'>Start the app</button>";
                 wrappedElement = angular.element(element);
 
-                var el = $compile(wrappedElement)(scope);
+                $compile(wrappedElement)(scope);
                 scope.$digest();
-
-                el.triggerHandler('click');
-
-                expect(scope.startFn).not.toHaveBeenCalled();
+                expect(wrappedElement.attr('disabled')).toBeTruthy();
             });
 
             it('Should launch app with passing condition', function() {
                 element = "<button ion-wizard-start='startFn()' condition='onStart_Pass_Condition()'>Start the app</button>";
                 wrappedElement = angular.element(element);
 
-                var el = $compile(wrappedElement)(scope);
+                $compile(wrappedElement)(scope);
                 scope.$digest();
-
-                el.triggerHandler('click');
-
-                expect(scope.startFn).toHaveBeenCalled();
+                expect(wrappedElement.attr('disabled')).toBeFalsy();
             });
 
             it('Should launch app if no condition defined', function() {
                 element = "<button ion-wizard-start='startFn()'>Start the app</button>";
                 wrappedElement = angular.element(element);
 
-                var el = $compile(wrappedElement)(scope);
+                $compile(wrappedElement)(scope);
                 scope.$digest();
-
-                el.triggerHandler('click');
-
-                expect(scope.startFn).toHaveBeenCalled();
+                expect(wrappedElement.attr('disabled')).toBeFalsy();
             });
         });
 
