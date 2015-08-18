@@ -139,12 +139,14 @@ angular.module('ionic.wizard', [])
                 startFn: '&ionWizardStart',
                 startCondition: '&condition'
             },
-            link: function(scope, element) {
+            link: function(scope, element, attrs) {
                 element.addClass('ng-hide');
 
                 element.on('click', function() {
-                    if (scope.startCondition()) {
+                    if (angular.isUndefined(attrs.condition)) {
                         scope.startFn();
+                    } else {
+                        scope.startCondition() && scope.startFn();
                     }
                 });
 

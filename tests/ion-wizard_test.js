@@ -220,7 +220,7 @@ describe('Unit testing wizard directives', function() {
             expect(wrappedElement.hasClass('ng-hide')).toBeFalsy();
         });
 
-        describe('evaluate start fn', function() {
+        describe('Test start condition', function() {
 
             beforeEach(function() {
                 scope.onStart_Pass_Condition = function() {
@@ -241,7 +241,7 @@ describe('Unit testing wizard directives', function() {
             });
 
 
-            it('and fail to launch app', function() {
+            it('Should fail to launch app with falsy condition', function() {
                 element = "<button ion-wizard-start='startFn()' condition='onStart_Fail_Condition()'>Start the app</button>";
                 wrappedElement = angular.element(element);
 
@@ -253,8 +253,20 @@ describe('Unit testing wizard directives', function() {
                 expect(scope.startFn).not.toHaveBeenCalled();
             });
 
-            it('and launch app', function() {
+            it('Should launch app with passing condition', function() {
                 element = "<button ion-wizard-start='startFn()' condition='onStart_Pass_Condition()'>Start the app</button>";
+                wrappedElement = angular.element(element);
+
+                var el = $compile(wrappedElement)(scope);
+                scope.$digest();
+
+                el.triggerHandler('click');
+
+                expect(scope.startFn).toHaveBeenCalled();
+            });
+
+            it('Should launch app if no condition defined', function() {
+                element = "<button ion-wizard-start='startFn()'>Start the app</button>";
                 wrappedElement = angular.element(element);
 
                 var el = $compile(wrappedElement)(scope);
