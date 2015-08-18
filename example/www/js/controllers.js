@@ -1,8 +1,15 @@
 angular.module('starter.controllers', [])
 
 .controller('IntroCtrl', ['$scope', '$state', '$ionicPopup', function($scope, $state, $ionicPopup) {
+    $scope.step2 = {};
+    $scope.step3 = {};
+
     $scope.start = function() {
         $state.go('tab.dash');
+    };
+
+    $scope.startCondition = function() {
+        return angular.isDefined($scope.step3.something);
     };
 
     $scope.$on('wizard:StepFailed', function(e, args) {

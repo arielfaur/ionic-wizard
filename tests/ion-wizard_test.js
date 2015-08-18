@@ -219,5 +219,53 @@ describe('Unit testing wizard directives', function() {
 
             expect(wrappedElement.hasClass('ng-hide')).toBeFalsy();
         });
+
+        describe('evaluate start fn', function() {
+
+            beforeEach(function() {
+                scope.onStart_Pass_Condition = function() {
+                    return true;
+                };
+
+                scope.onStart_Fail_Condition = function() {
+                    return false;
+                };
+
+                scope.startFn = function() {
+                    console.log('Launch app');
+                };
+
+                spyOn(scope, 'startFn');
+                spyOn(scope, 'onStart_Fail_Condition').and.callThrough();
+                spyOn(scope, 'onStart_Pass_Condition').and.callThrough();
+            });
+
+
+            it('and fail to launch app', function() {
+                element = "<button ion-wizard-start='startFn()' condition='onStart_Fail_Condition()'>Start the app</button>";
+                wrappedElement = angular.element(element);
+
+                var el = $compile(wrappedElement)(scope);
+                scope.$digest();
+
+                el.triggerHandler('click');
+
+                expect(scope.startFn).not.toHaveBeenCalled();
+            });
+
+            it('and launch app', function() {
+                element = "<button ion-wizard-start='startFn()' condition='onStart_Pass_Condition()'>Start the app</button>";
+                wrappedElement = angular.element(element);
+
+                var el = $compile(wrappedElement)(scope);
+                scope.$digest();
+
+                el.triggerHandler('click');
+
+                expect(scope.startFn).toHaveBeenCalled();
+            });
+        });
+
+
     });
 });

@@ -12,7 +12,7 @@
         <button class="button button-light no-animation" ion-wizard-next>
             Next
         </button>
-        <button class="button button-light no-animation" ion-wizard-start="start()">
+        <button class="button button-light no-animation" ion-wizard-start="start()" condition="startCondition()">
             Start App
         </button>
     </ion-nav-buttons>
@@ -160,8 +160,15 @@
         <ion-slide ion-wizard-step class="has-header">
             <div class="row">
                 <div class="col col-center">
-                    <h3 class="positive">Thanks for completing the wizard!</h3>
-                    <p>You can start using the app</p>
+                    <h3 class="positive">Thanks for running the wizard!</h3>
+                    <p>As a last step please fill in the field below</p>
+                    <div class="item item-input-inset">
+                        <label class="item item-input-wrapper">
+                            <i class="icon ion-search placeholder-icon"></i>
+                            <input type="text" placeholder="Type something" ng-model="step3.something" autocomplete="off">
+                        </label>
+                    </div>
+                    <h3 ng-show="step3.something">You can now launch the app using the button above!</h3>
                 </div>
             </div>
         </ion-slide>

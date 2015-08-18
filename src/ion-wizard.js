@@ -93,7 +93,7 @@ angular.module('ionic.wizard', [])
                 var conditions = {
                     next: nextFn,
                     prev: prevFn
-                }
+                };
 
                 controller.addCondition(conditions);
             }
@@ -136,13 +136,16 @@ angular.module('ionic.wizard', [])
         return{
             restrict: 'EA',
             scope: {
-                startFn: '&ionWizardStart'
+                startFn: '&ionWizardStart',
+                startCondition: '&condition'
             },
             link: function(scope, element) {
                 element.addClass('ng-hide');
 
                 element.on('click', function() {
-                    scope.startFn();
+                    if (scope.startCondition()) {
+                        scope.startFn();
+                    }
                 });
 
                 scope.$on("slideBox.slideChanged", function(e, index) {
