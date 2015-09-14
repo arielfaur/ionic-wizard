@@ -89,13 +89,15 @@ angular.module('ionic.wizard', [])
             }
         }
     }])
-    .directive('ionWizardPrevious', ['$rootScope', '$ionicSlideBoxDelegate', function($rootScope) {
+    .directive('ionWizardPrevious', ['$rootScope', '$ionicSlideBoxDelegate', function($rootScope, $ionicSlideBoxDelegate) {
         return{
             restrict: 'EA',
             scope: {},
             link: function(scope, element, attrs, controller) {
 
-                element.addClass('ng-hide');
+                if ($ionicSlideBoxDelegate.currentIndex() == 0){
+                    element.addClass('ng-hide');
+                }
 
                 element.on('click', function() {
                     $rootScope.$broadcast("wizard:Previous");
@@ -116,6 +118,9 @@ angular.module('ionic.wizard', [])
             restrict: 'EA',
             scope: {},
             link: function(scope, element, attrs, controller) {
+                if ($ionicSlideBoxDelegate.currentIndex() == $ionicSlideBoxDelegate.slidesCount() - 1){
+                    element.addClass('ng-hide');
+                }
                 element.on('click', function() {
                     $rootScope.$broadcast("wizard:Next");
                 });
@@ -139,6 +144,9 @@ angular.module('ionic.wizard', [])
             },
             link: function(scope, element, attrs) {
                 element.addClass('ng-hide');
+                if ($ionicSlideBoxDelegate.currentIndex() == $ionicSlideBoxDelegate.slidesCount() - 1){
+                    element.removeClass('ng-hide');
+                }
 
                 function checkCondition() {
                     return (angular.isUndefined(attrs.condition)) ? true : scope.startCondition();
