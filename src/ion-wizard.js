@@ -31,8 +31,8 @@ angular.module('ionic.wizard', [])
             }],
             link: function (scope, element, attrs, controller) {
                 var currentIndex = 0;
-
-                $ionicSlideBoxDelegate.enableSlide(false);
+                var enableSlide = attrs.enableslide === "true" ? true : false;
+                $ionicSlideBoxDelegate.enableSlide(enableSlide);
 
                 element.css('height', '100%');
 
