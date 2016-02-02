@@ -12,6 +12,10 @@ angular.module('starter.controllers', [])
         return angular.isDefined($scope.step3.something);
     };
 
+    $scope.showMessage = function() {
+        alert('Thanks!');
+    };
+
 }])
 
 .controller('DashCtrl', function($scope) {})
