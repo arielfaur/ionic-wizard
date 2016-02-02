@@ -243,6 +243,49 @@ describe('Unit testing wizard directives', function() {
             });
 
         });
+        describe("step-action", function() {
+            var firstStepActionPeformed,
+                secondStepActionPerformed;
+            beforeEach(function () {
+                secondStepActionPerformed = false;
+                firstStepActionPeformed = false;
+                inject(function(_$ionicSlideBoxDelegate_) {
+                    scope.secondStepActionFn = function () {
+                        secondStepActionPerformed = true;
+                    };
+                    scope.firstStepActionFn = function () {
+                        firstStepActionPeformed = true;
+                    };
+                    element = angular.element("<div ion-wizard><div ion-wizard-step step-action='firstStepActionFn()' >Move next</div> \
+                        <div ion-wizard-step step-action='secondStepActionFn()' >Move next</div> \
+                        <div ion-wizard-step >Move Next</div> \
+                        </div>");
+
+                    $compile(element)(scope);
+                    scope.$digest();
+                    controller = element.controller('ionWizard');
+                });
+            });
+
+            it("should perform a step action on the first step when first loading", function () {
+                expect(firstStepActionPeformed).toBe(true);
+            });
+
+
+            it("should perform a step action when moving forward to that step", function () {
+                expect(secondStepActionPerformed).toBe(false);
+                $rootScope.$broadcast("wizard:Next");
+                expect(secondStepActionPerformed).toBe(true);
+            });
+
+            it("should perform a step action when moving back to that step", function () {
+                expect(secondStepActionPerformed).toBe(false);
+                $rootScope.$broadcast("slideBox.slideChanged", 2);
+                $rootScope.$broadcast("wizard:Previous");
+                expect(secondStepActionPerformed).toBe(true);
+            });
+
+        });
     });
 
     describe('Test wizard start button', function() {

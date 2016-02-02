@@ -6,7 +6,8 @@ angular.module('ionic.wizard', [])
         return{
             restrict: 'EA',
             controller: [function() {
-                var conditions = [];
+                var conditions = [],
+                    actions = [];
 
                 this.addCondition = function(condition) {
                     conditions.push(condition);
@@ -28,6 +29,14 @@ angular.module('ionic.wizard', [])
                         : conditions[index].prev();
                 };
 
+                this.addStepAction = function(action) {
+                    actions.push(action);
+                };
+
+                this.performStepAction = function(index) {
+                    angular.isDefined(actions[index]) ? actions[index]() : undefined;
+                };
+
             }],
             link: function (scope, element, attrs, controller) {
                 var currentIndex = 0;
@@ -37,9 +46,11 @@ angular.module('ionic.wizard', [])
                 element.css('height', '100%');
 
                 scope.$on("wizard:Previous", function() {
+                    controller.performStepAction(currentIndex - 1);
                     $ionicSlideBoxDelegate.previous();
                 });
                 scope.$on("wizard:Next", function() {
+                    controller.performStepAction(currentIndex + 1);
                     $ionicSlideBoxDelegate.next();
                 });
 
@@ -54,6 +65,8 @@ angular.module('ionic.wizard', [])
                 scope.$on("slideBox.slideChanged", function(e, index) {
                     currentIndex = index;
                 });
+
+                controller.performStepAction(0);
             }
         }
 
@@ -63,7 +76,8 @@ angular.module('ionic.wizard', [])
             restrict: 'EA',
             scope: {
                 nextConditionFn: '&nextCondition',
-                prevConditionFn: "&prevCondition"
+                prevConditionFn: "&prevCondition",
+                actionFn: '&stepAction'
             },
             require: '^^ionWizard',
             link: function(scope, element, attrs, controller) {
@@ -86,6 +100,7 @@ angular.module('ionic.wizard', [])
                 };
 
                 controller.addCondition(conditions);
+                controller.addStepAction(attrs.stepAction ? scope.actionFn : undefined);
             }
         }
     }])
