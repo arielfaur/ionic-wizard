@@ -22,11 +22,9 @@ describe('Unit testing wizard directives', function() {
     }));
 
     describe('Test wizard next button', function() {
-        var element, wrappedElement, $ionicSlideBoxDelegate;
+        var element, wrappedElement;
 
-        beforeEach(inject(function(_$ionicSlideBoxDelegate_) {
-
-            $ionicSlideBoxDelegate = _$ionicSlideBoxDelegate_;
+        beforeEach(inject(function() {
 
             element = "<button ion-wizard-next>Move next</button>";
             wrappedElement = angular.element(element);
@@ -43,22 +41,19 @@ describe('Unit testing wizard directives', function() {
 
         it('Should hide next button when reaching the last wizard step', function() {
 
-            spyOn($ionicSlideBoxDelegate, 'slidesCount').and.returnValue(3);
-
             // Compile a piece of HTML containing the directive
             $compile(wrappedElement)(scope);
 
-            $rootScope.$broadcast('slideBox.slideChanged', 2);
+            $rootScope.$broadcast('wizard:IndexChanged', 2, 3);
 
             expect(wrappedElement.hasClass('ng-hide')).toBeTruthy();
         });
 
         it('Should display next button if not the end of wizard', function() {
-            spyOn($ionicSlideBoxDelegate, 'slidesCount').and.returnValue(13);
 
             $compile(wrappedElement)(scope);
 
-            $rootScope.$broadcast('slideBox.slideChanged', 1);
+            $rootScope.$broadcast('wizard:IndexChanged', 1, 13);
 
             expect(wrappedElement.hasClass('ng-hide')).toBeFalsy();
         });
@@ -66,11 +61,9 @@ describe('Unit testing wizard directives', function() {
     });
 
     describe('Test wizard previous button', function() {
-        var element, wrappedElement, $ionicSlideBoxDelegate;
+        var element, wrappedElement;
 
-        beforeEach(inject(function(_$ionicSlideBoxDelegate_) {
-
-            $ionicSlideBoxDelegate = _$ionicSlideBoxDelegate_;
+        beforeEach(inject(function() {
 
             element = "<button ion-wizard-previous>Move Previous</button>";
             wrappedElement = angular.element(element);
@@ -88,7 +81,7 @@ describe('Unit testing wizard directives', function() {
         it('Should hide previous button on first step', function() {
             $compile(wrappedElement)(scope);
 
-            $rootScope.$broadcast('slideBox.slideChanged', 0);
+            $rootScope.$broadcast('wizard:IndexChanged', 0, 2);
 
             expect(wrappedElement.hasClass('ng-hide')).toBeTruthy();
         });
@@ -96,7 +89,7 @@ describe('Unit testing wizard directives', function() {
         it('Should display previous button on every other step', function() {
             $compile(wrappedElement)(scope);
 
-            $rootScope.$broadcast('slideBox.slideChanged', 5);
+            $rootScope.$broadcast('wizard:IndexChanged', 5, 7);
 
             expect(wrappedElement.hasClass('ng-hide')).toBeFalsy();
         });
@@ -105,10 +98,10 @@ describe('Unit testing wizard directives', function() {
 
 
     describe('Test wizard directive', function() {
-        var element, controller, $ionicSlideBoxDelegate, nextButtonElement, prevButtonElement;
+        var element, controller, nextButtonElement, prevButtonElement;
 
         var injectDirectives = function injectDirectives(condition) {
-            inject(function(_$ionicSlideBoxDelegate_) {
+            inject(function() {
 
                 if (condition === undefined) {
                     // no conditions
@@ -156,6 +149,8 @@ describe('Unit testing wizard directives', function() {
                 });
 
                 it("should enable the next button", function() {
+                    var condition = controller.checkNextCondition(0);
+                    $rootScope.$broadcast('wizard:NextCondition', condition);
                     var buttonDisabled = nextButtonElement.attr("disabled");
                     expect(buttonDisabled).toBeFalsy();
                 });
@@ -172,6 +167,8 @@ describe('Unit testing wizard directives', function() {
                 });
 
                 it("should enable the next button", function() {
+                    var condition = controller.checkNextCondition(0);
+                    $rootScope.$broadcast('wizard:NextCondition', condition);
                     var buttonDisabled = nextButtonElement.attr("disabled");
                     expect(buttonDisabled).toBeFalsy();
                 });
@@ -188,6 +185,9 @@ describe('Unit testing wizard directives', function() {
                 });
 
                 it("should disable the next button", function() {
+                    var condition = controller.checkNextCondition(0);
+                    $rootScope.$broadcast('wizard:NextCondition', condition);
+
                     var buttonDisabled = nextButtonElement.attr("disabled");
                     expect(buttonDisabled).toBeTruthy();
                 });
@@ -204,7 +204,9 @@ describe('Unit testing wizard directives', function() {
                     expect(condition).toBeTruthy();
                 });
 
-                it("should enable the next button", function() {
+                it("should enable the previous button", function() {
+                    var condition = controller.checkPreviousCondition(0);
+                    $rootScope.$broadcast('wizard:PreviousCondition', condition);
                     var buttonDisabled = prevButtonElement.attr("disabled");
                     expect(buttonDisabled).toBeFalsy();
                 });
@@ -220,7 +222,9 @@ describe('Unit testing wizard directives', function() {
                     expect(condition).toBeTruthy();
                 });
 
-                it("should enable the next button", function() {
+                it("should enable the previous button", function() {
+                    var condition = controller.checkPreviousCondition(0);
+                    $rootScope.$broadcast('wizard:PreviousCondition', condition);
                     var buttonDisabled = prevButtonElement.attr("disabled");
                     expect(buttonDisabled).toBeFalsy();
                 });
@@ -236,7 +240,9 @@ describe('Unit testing wizard directives', function() {
                     expect(condition).toBeFalsy();                    
                 });
 
-                it("should disable the next button", function() {
+                it("should disable the previous button", function() {
+                    var condition = controller.checkPreviousCondition(0);
+                    $rootScope.$broadcast('wizard:PreviousCondition', condition);
                     var buttonDisabled = prevButtonElement.attr("disabled");
                     expect(buttonDisabled).toBeTruthy();
                 });
@@ -257,21 +263,19 @@ describe('Unit testing wizard directives', function() {
         }));
 
         it('Should hide start button on any step but the last one', function () {
-            spyOn($ionicSlideBoxDelegate, 'slidesCount').and.returnValue(13);
-
+            
             $compile(wrappedElement)(scope);
 
-            $rootScope.$broadcast('slideBox.slideChanged', 5);
+            $rootScope.$broadcast('wizard:IndexChanged', 5, 13);
 
             expect(wrappedElement.hasClass('ng-hide')).toBeTruthy();
         });
 
         it('Should display start button on the last step', function () {
-            spyOn($ionicSlideBoxDelegate, 'slidesCount').and.returnValue(13);
 
             $compile(wrappedElement)(scope);
 
-            $rootScope.$broadcast('slideBox.slideChanged', 12);
+            $rootScope.$broadcast('wizard:IndexChanged', 12, 13);
 
             expect(wrappedElement.hasClass('ng-hide')).toBeFalsy();
         });

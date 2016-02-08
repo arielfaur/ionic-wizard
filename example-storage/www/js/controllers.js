@@ -2,7 +2,8 @@ angular.module('starter.controllers', [])
 
 .controller('IntroCtrl', ['$scope', '$state', '$localStorage', function($scope, $state, $localStorage) {
     // here we store wizard data
-    $scope.wizard = {};
+    $scope.step2 = {};
+    $scope.step3 = {};
 
     function persistWizardData() {
         // set flag to indicate wizard has been run
@@ -14,6 +15,10 @@ angular.module('starter.controllers', [])
             someOtherData: 'test data'
             };
     }
+
+    $scope.startCondition = function() {
+        return angular.isDefined($scope.step3.something);
+    };
 
     $scope.start = function() {
         // save whatever data we need and then redirect to main app

@@ -1,8 +1,11 @@
+/*
+Ionic Wizard v2.0
+
+2016-02-07
+Updated to work with Ionic 1.2
+*/
 angular.module('ionic.wizard', [])
-    .directive('ionWizardContent', ['ionContentDirective', function(ionContentDirective) {
-      return angular.extend({}, ionContentDirective[0], { scope: false });
-    }])
-    .directive('ionWizard', ['$rootScope', '$ionicSlideBoxDelegate', function($rootScope, $ionicSlideBoxDelegate) {
+    .directive('ionWizard', ['$rootScope', '$timeout', function($rootScope, $timeout) {
         return{
             restrict: 'EA',
             controller: [function() {
@@ -32,27 +35,53 @@ angular.module('ionic.wizard', [])
             link: function (scope, element, attrs, controller) {
                 var currentIndex = 0;
 
-                $ionicSlideBoxDelegate.enableSlide(false);
-
-                element.css('height', '100%');
+                scope.swiperOptions = angular.extend(scope.swiperOptions || {}, {
+                    initialSlide: 0,
+                    autoHeight: true,
+                    onInit: function(swiper){
+                        scope.swiper = swiper;        
+                    }
+                });
 
                 scope.$on("wizard:Previous", function() {
-                    $ionicSlideBoxDelegate.previous();
+                    scope.swiper.slidePrev(true);
                 });
                 scope.$on("wizard:Next", function() {
-                    $ionicSlideBoxDelegate.next();
+                    scope.swiper.slideNext(true);
                 });
+
+                scope.$watch('swiper', function(swiper) {
+                    if (!swiper) return;
+
+                    swiper.on('onTransitionStart', function(e){
+                        $timeout(function() {
+                            currentIndex = e.activeIndex;
+                        });
+                        $rootScope.$broadcast("wizard:IndexChanged", e.activeIndex, swiper.slides.length);
+                    });
+                })
+
 
                 // watch the current index's condition for changes and broadcast the new condition state on change
                 scope.$watch(function() {
                     return controller.checkNextCondition(currentIndex) && controller.checkPreviousCondition(currentIndex);
                 }, function() {
-                    $rootScope.$broadcast("wizard:NextCondition", controller.checkNextCondition(currentIndex));
-                    $rootScope.$broadcast("wizard:PreviousCondition", controller.checkPreviousCondition(currentIndex));                    
-                });
+                    if (!scope.swiper) return;
 
-                scope.$on("slideBox.slideChanged", function(e, index) {
-                    currentIndex = index;
+                    var allowNext = controller.checkNextCondition(currentIndex),
+                        allowPrev = controller.checkPreviousCondition(currentIndex);
+
+                    if (allowNext) 
+                        scope.swiper.unlockSwipeToNext() 
+                    else 
+                        scope.swiper.lockSwipeToNext();
+                    if (allowPrev) 
+                        scope.swiper.unlockSwipeToPrev() 
+                    else 
+                        scope.swiper.lockSwipeToPrev();
+
+                    $rootScope.$broadcast("wizard:NextCondition", allowNext);
+                    $rootScope.$broadcast("wizard:PreviousCondition", allowPrev);                    
                 });
             }
         }
@@ -89,21 +118,18 @@ angular.module('ionic.wizard', [])
             }
         }
     }])
-    .directive('ionWizardPrevious', ['$rootScope', '$ionicSlideBoxDelegate', function($rootScope, $ionicSlideBoxDelegate) {
+    .directive('ionWizardPrevious', ['$rootScope', function($rootScope) {
         return{
             restrict: 'EA',
             scope: {},
             link: function(scope, element, attrs, controller) {
-
-                if ($ionicSlideBoxDelegate.currentIndex() == 0){
-                    element.addClass('ng-hide');
-                }
+                element.addClass('ng-hide');
 
                 element.on('click', function() {
                     $rootScope.$broadcast("wizard:Previous");
                 });
 
-                scope.$on("slideBox.slideChanged", function(e, index) {
+                scope.$on("wizard:IndexChanged", function(e, index) {
                     element.toggleClass('ng-hide', index == 0);
                 });
                 
@@ -113,20 +139,17 @@ angular.module('ionic.wizard', [])
             }
         }
     }])
-    .directive('ionWizardNext', ['$rootScope', '$ionicSlideBoxDelegate', function($rootScope, $ionicSlideBoxDelegate) {
+    .directive('ionWizardNext', ['$rootScope', function($rootScope) {
         return{
             restrict: 'EA',
             scope: {},
             link: function(scope, element, attrs, controller) {
-                if ($ionicSlideBoxDelegate.currentIndex() == $ionicSlideBoxDelegate.slidesCount() - 1){
-                    element.addClass('ng-hide');
-                }
                 element.on('click', function() {
                     $rootScope.$broadcast("wizard:Next");
                 });
 
-                scope.$on("slideBox.slideChanged", function(e, index) {
-                    element.toggleClass('ng-hide', index == $ionicSlideBoxDelegate.slidesCount() - 1);
+                scope.$on("wizard:IndexChanged", function(e, index, count) {
+                    element.toggleClass('ng-hide', index == count - 1);
                 });
 
                 scope.$on("wizard:NextCondition", function(e, condition) {
@@ -135,7 +158,7 @@ angular.module('ionic.wizard', [])
             }
         }
     }])
-    .directive('ionWizardStart', ['$ionicSlideBoxDelegate', function($ionicSlideBoxDelegate) {
+    .directive('ionWizardStart', [function() {
         return{
             restrict: 'EA',
             scope: {
@@ -144,9 +167,6 @@ angular.module('ionic.wizard', [])
             },
             link: function(scope, element, attrs) {
                 element.addClass('ng-hide');
-                if ($ionicSlideBoxDelegate.currentIndex() == $ionicSlideBoxDelegate.slidesCount() - 1){
-                    element.removeClass('ng-hide');
-                }
 
                 function checkCondition() {
                     return (angular.isUndefined(attrs.condition)) ? true : scope.startCondition();
@@ -162,8 +182,8 @@ angular.module('ionic.wizard', [])
                     element.attr('disabled', !result);
                 });
 
-                scope.$on("slideBox.slideChanged", function(e, index) {
-                    element.toggleClass('ng-hide', index < $ionicSlideBoxDelegate.slidesCount() - 1);
+                scope.$on("wizard:IndexChanged", function(e, index, count) {
+                    element.toggleClass('ng-hide', index < count - 1);
                 });
             }
         }

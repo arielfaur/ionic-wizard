@@ -16,9 +16,9 @@
             Start App
         </button>
     </ion-nav-buttons>
-    <ion-slide-box ion-wizard>
-        <ion-slide ion-wizard-step>
-            <ion-wizard-content class="has-header">
+    <ion-slides options="swiperOptions" slider="swiper" ion-wizard>
+        <ion-slide-page ion-wizard-step>
+            <ion-content class="has-header">
             <div class="row">
                 <div class="col col-center">
                     <div class="card rounded">
@@ -75,10 +75,52 @@
                     </div>
                 </div>
             </div>
-            </ion-wizard-content>
-        </ion-slide>
-        <ion-slide ion-wizard-step next-condition="step2.name" prev-condition="!step2.name">
-            <ion-wizard-content class="has-header">
+            <div class="row">
+                <div class="col col-center">
+                    <div class="card rounded">
+                        <div class="item">
+                            <h2 class="positive">This slide is scrollable</h2>
+                        </div>
+                        <div class="item item-text-wrap">
+                            <p>
+                                Click the buttons above
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col col-center">
+                    <div class="card rounded">
+                        <div class="item">
+                            <h2 class="positive">This slide is scrollable</h2>
+                        </div>
+                        <div class="item item-text-wrap">
+                            <p>
+                                Click the buttons above
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col col-center">
+                    <div class="card rounded">
+                        <div class="item">
+                            <h2 class="positive">This slide is scrollable</h2>
+                        </div>
+                        <div class="item item-text-wrap">
+                            <p>
+                                Click the buttons above
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </ion-content>
+        </ion-slide-page>
+        <ion-slide-page ion-wizard-step next-condition="step2.name" prev-condition="!step2.name">
+            <ion-content class="has-header">
             <div class="row">
                 <div class="col col-center">
                     <div class="item item-input-inset">
@@ -159,9 +201,9 @@
                     </div>
                 </div>
             </div>
-            </ion-wizard-content>
-        </ion-slide>
-        <ion-slide ion-wizard-step class="has-header">
+            </ion-content>
+        </ion-slide-page>
+        <ion-slide-page ion-wizard-step class="has-header">
             <div class="row">
                 <div class="col col-center">
                     <h3 class="positive">Thanks for running the wizard!</h3>
@@ -175,7 +217,7 @@
                     <h3 ng-show="step3.something">You can now launch the app using the button above!</h3>
                 </div>
             </div>
-        </ion-slide>
-    </ion-slide-box>
+        </ion-slide-page>
+    </ion-slides>
 
 </ion-view>
