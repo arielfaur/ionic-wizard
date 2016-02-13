@@ -1,23 +1,23 @@
 <ion-view>
     <ion-nav-buttons side="left">
-        <button class="button button-light no-animation"
+        <button class="button button-light"
                 ng-click="start()">
             Skip wizard
         </button>
-        <button class="button button-light no-animation" ion-wizard-previous>
+        <button class="button button-light" ion-wizard-previous>
             Back
         </button>
     </ion-nav-buttons>
     <ion-nav-buttons side="right">
-        <button class="button button-light no-animation" ion-wizard-next>
+        <button class="button button-light" ion-wizard-next>
             Next
         </button>
-        <button class="button button-light no-animation" ion-wizard-start="start()" condition="startCondition()">
+        <button class="button button-light" ion-wizard-start="start()" condition="startCondition()">
             Start App
         </button>
     </ion-nav-buttons>
     <ion-slides options="swiperOptions" slider="swiper" ion-wizard>
-        <ion-slide-page ion-wizard-step>
+        <ion-slide-page ion-wizard-step next-condition="step1.something">
             <ion-content class="has-header">
             <div class="row">
                 <div class="col col-center">
@@ -26,9 +26,7 @@
                             <h2 class="positive">Thanks for trying out this wizard!</h2>
                         </div>
                         <div class="item item-text-wrap">
-                            <p>
-                                Click the buttons above
-                            </p>
+                            <input type="text" placeholder="Type something" ng-model="step1.something" autocomplete="off">
                         </div>
                     </div>
                 </div>

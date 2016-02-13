@@ -1,7 +1,7 @@
 /*
-Ionic Wizard v2.0
+Ionic Wizard v2.0.1
 
-2016-02-07
+2016-02-13
 Updated to work with Ionic 1.2
 */
 angular.module('ionic.wizard', [])
@@ -59,29 +59,28 @@ angular.module('ionic.wizard', [])
                         });
                         $rootScope.$broadcast("wizard:IndexChanged", e.activeIndex, swiper.slides.length);
                     });
-                })
 
+                     // watch the current index's condition for changes and broadcast the new condition state on change
+                    scope.$watch(function() {
+                        return controller.checkNextCondition(currentIndex) && controller.checkPreviousCondition(currentIndex);
+                    }, function() {
+                        if (!scope.swiper) return;
 
-                // watch the current index's condition for changes and broadcast the new condition state on change
-                scope.$watch(function() {
-                    return controller.checkNextCondition(currentIndex) && controller.checkPreviousCondition(currentIndex);
-                }, function() {
-                    if (!scope.swiper) return;
+                        var allowNext = controller.checkNextCondition(currentIndex),
+                            allowPrev = controller.checkPreviousCondition(currentIndex);
 
-                    var allowNext = controller.checkNextCondition(currentIndex),
-                        allowPrev = controller.checkPreviousCondition(currentIndex);
+                        if (allowNext) 
+                            scope.swiper.unlockSwipeToNext() 
+                        else 
+                            scope.swiper.lockSwipeToNext();
+                        if (allowPrev) 
+                            scope.swiper.unlockSwipeToPrev() 
+                        else 
+                            scope.swiper.lockSwipeToPrev();
 
-                    if (allowNext) 
-                        scope.swiper.unlockSwipeToNext() 
-                    else 
-                        scope.swiper.lockSwipeToNext();
-                    if (allowPrev) 
-                        scope.swiper.unlockSwipeToPrev() 
-                    else 
-                        scope.swiper.lockSwipeToPrev();
-
-                    $rootScope.$broadcast("wizard:NextCondition", allowNext);
-                    $rootScope.$broadcast("wizard:PreviousCondition", allowPrev);                    
+                        $rootScope.$broadcast("wizard:NextCondition", allowNext);
+                        $rootScope.$broadcast("wizard:PreviousCondition", allowPrev);                    
+                    });
                 });
             }
         }

@@ -1,6 +1,7 @@
 angular.module('starter.controllers', [])
 
 .controller('IntroCtrl', ['$scope', '$state', function($scope, $state) {
+    $scope.step1 = {};
     $scope.step2 = {};
     $scope.step3 = {};
 
